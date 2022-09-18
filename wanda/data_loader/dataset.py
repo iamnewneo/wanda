@@ -7,8 +7,11 @@ from wanda.utils.util import get_tranforms
 
 
 class HSWifiTrainDataset(Dataset):
-    def __init__(self):
-        self.df = pd.read_csv(f"{config.BASE_PATH}/data/processed/train.csv")
+    def __init__(self, train):
+        if train:
+            self.df = pd.read_csv(f"{config.BASE_PATH}/data/processed/train.csv")
+        else:
+            self.df = pd.read_csv(f"{config.BASE_PATH}/data/processed/test.csv")
         if config.ENV == "dev":
             self.df = self.df.head(300)
         self.transform = get_tranforms()
@@ -20,6 +23,7 @@ class HSWifiTrainDataset(Dataset):
         row = self.df.iloc[idx]
         X_1_path = row["path"]
         X_2_path = row["next_image"]
+        label = row["label"]
 
         X_1 = Image.open(X_1_path)
         X_2 = Image.open(X_2_path)
@@ -28,4 +32,5 @@ class HSWifiTrainDataset(Dataset):
         return {
             "X_1": X_1.type(torch.float32) / 255,
             "X_2": X_2.type(torch.float32) / 255,
+            "label": label,
         }
