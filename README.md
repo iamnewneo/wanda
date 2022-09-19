@@ -1,12 +1,9 @@
 WANDA: Wifi Anomaly Detection Algorithm
-SIZE: torch.Size([1, 345, 391])
 
 General Info
-This repository includes code for training a Convolutional Neural Network (CNN) to 15 different types of interferences.
+This repository includes code for training a H-Score based Convolutional Neural Network (CNN) and an SVM to detect anomaly in Wifi signals.
 
-Dataset Used: http://www.crawdad.org/owl/interference/20190212/index.html
-
-We use very simple CNN model and achieve best accuracy of ~80% with 25 Epochs.
+Dataset Used: Variation of http://www.crawdad.org/owl/interference/20190212/index.html
 
 This implementation uses pytorch library and pytorch lightning trainer
 
@@ -17,7 +14,3 @@ Setup
 To run this project install the requirements and make sure you have at least 14GB GPU:
 
 bash train.sh
-Todo
-Use command line arguments to change training parameters e.g batch size and epochs
-Model can be improved [loss is still converging], use more complex model and increase epochs. Current model is very simple.
-Add comments
