@@ -3,7 +3,7 @@ import os
 ENV = os.getenv("ENV", "dev")
 configs = {
     "dev": {"DEVICE": "cpu", "BATCH_SIZE": 4, "MAX_EPOCHS": 1, "LR": 0.1,},
-    "prod": {"DEVICE": "cpu", "BATCH_SIZE": 256, "MAX_EPOCHS": 50, "LR": 0.0001,},
+    "prod": {"DEVICE": "cuda", "BATCH_SIZE": 256, "MAX_EPOCHS": 50, "LR": 0.0001,},
 }
 
 SEED = 42
