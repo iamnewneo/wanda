@@ -50,7 +50,6 @@ class WandaHSCNN(pl.LightningModule):
         X_1_out = self(X_1)
         X_2_out = self(X_2)
         loss = self.loss_fn(X_1_out[1], X_2_out[1])
-        self.log("train_loss", loss, prog_bar=True)
         return loss
 
     def training_epoch_end(self, train_step_outputs):
