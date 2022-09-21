@@ -21,13 +21,13 @@ class SVMModel:
     def get_preprocess_data(self, data_loader):
         tranformed_images = []
         labels = []
-        for idx, batch in enumerate(data_loader):
-            X_1_images = batch["X_1"]
-            activation_maps, _ = self.cnn_hs.predict(X_1_images, batch_idx=idx)
-            activation_maps = torch.flatten(activation_maps, start_dim=1)
-            tranformed_images.append(activation_maps)
-
-            labels.append(batch["label"].numpy())
+        with torch.no_grad():
+            for idx, batch in enumerate(data_loader):
+                X_1_images = batch["X_1"]
+                activation_maps, _ = self.cnn_hspredict(X_1_images, batch_idx=idx)
+                activation_maps = torch.flatten(activation_maps, start_dim=1)
+                tranformed_images.append(activation_maps)
+                labels.append(batch["label"].numpy())
 
         flattened_tranformed_images = torch.cat(tranformed_images)
         labels = np.asarray(labels).flatten()
