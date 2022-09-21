@@ -50,9 +50,10 @@ class WandaHSCNN(pl.LightningModule):
         X_1_out = self(X_1)
         X_2_out = self(X_2)
         loss = self.loss_fn(X_1_out[1], X_2_out[1])
-        return loss
+        return {"loss": loss}
 
     def training_epoch_end(self, train_step_outputs):
         avg_train_loss = torch.tensor([x["loss"] for x in train_step_outputs]).mean()
         self.temp_train_loss = avg_train_loss
         print(f"\nEpoch: {self.current_epoch} Train Loss: {self.temp_train_loss:.2f}")
+        return {}
