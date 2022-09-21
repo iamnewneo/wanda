@@ -16,10 +16,10 @@ class HSDataReader:
         else:
             _data_dir = TEST_DIR
         self.train = train
-        self.sig_snr_neg_10 = f"{_data_dir}/Wifi2_-10"
-        self.sig_snr_0 = f"{_data_dir}/Wifi2_0"
-        self.sig_snr_10 = f"{_data_dir}/Wifi2_10"
-        self.sig_snr_20 = f"{_data_dir}/Wifi2_20"
+        self.sig_snr_neg_10 = f"{_data_dir}/WiFi2_-10"
+        self.sig_snr_0 = f"{_data_dir}/WiFi2_0"
+        self.sig_snr_10 = f"{_data_dir}/WiFi2_10"
+        self.sig_snr_20 = f"{_data_dir}/WiFi2_20"
         self.processed_data_path = f"{DATA_DIR}/processed"
         self.headers = ["path", "snr", "image_index", "next_image", "label"]
 
