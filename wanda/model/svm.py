@@ -24,7 +24,7 @@ class SVMModel:
         with torch.no_grad():
             for idx, batch in enumerate(data_loader):
                 X_1_images = batch["X_1"]
-                activation_maps, _ = self.cnn_hs(X_1_images, batch_idx=idx)
+                activation_maps, _ = self.cnn_hs(X_1_images)
                 activation_maps = torch.flatten(activation_maps, start_dim=1)
                 tranformed_images.append(activation_maps)
                 labels.append(batch["label"].numpy())
