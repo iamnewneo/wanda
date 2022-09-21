@@ -12,7 +12,7 @@ def main():
         data_reader.process_dataset()
 
     hs_train_loader = create_hs_data_loader(batch_size=config.BATCH_SIZE)
-    hs_trainer = hs_model_trainer(hs_train_loader, progress_bar_refresh_rate=None)
+    hs_trainer = hs_model_trainer(hs_train_loader, progress_bar_refresh_rate=10)
     hs_model = hs_trainer.get_model()
 
     if not file_exists(f"{config.BASE_PATH}/models/WandaHSCNN.pt"):
