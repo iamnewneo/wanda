@@ -2,4 +2,4 @@ import torchvision.transforms as transforms
 
 
 def get_tranforms():
-    return transforms.Compose([transforms.ToTensor(), transforms.CenterCrop(256)])
+    return transforms.Compose([transforms.CenterCrop(256), transforms.ToTensor()])
