@@ -20,15 +20,21 @@ class Evaluator:
             self.preprocess_data()
 
         hs_test_loader = create_hs_data_loader(
-            batch_size=config.BATCH_SIZE, train=False, shuffle=True
+            batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=True
         )
         transformed_X, labels = self.svm_model.get_preprocess_data(hs_test_loader)
         preds = self.svm_model.predict(transformed_X)
 
-        accuracy = accuracy_score(labels, preds)
         # Temp Hack: FIXIT, ROC Cannot take all values as same class
+        tranformed_preds = []
+        for x in preds:
+            if x == -1:
+                tranformed_preds.append(1)
+            else:
+                tranformed_preds.append(0)
         labels[-1] = 0
-        auc_score = roc_auc_score(labels, preds)
+        auc_score = roc_auc_score(labels, tranformed_preds)
+        accuracy = accuracy_score(labels, tranformed_preds)
 
         print("Current Model Performance:")
         print(f"Accuracy: {accuracy:.2f}. AUC: {auc_score:.2f}")
