@@ -16,14 +16,18 @@ class Evaluator:
         data_reader.process_dataset()
 
     def evaulate(self):
+        print("Startign Evaulate")
         if not file_exists(f"{config.BASE_PATH}/data/processed/test.csv"):
             self.preprocess_data()
 
         hs_test_loader = create_hs_data_loader(
             batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=True
         )
+        print("Created Test Loader")
         transformed_X, labels = self.svm_model.get_preprocess_data(hs_test_loader)
+        print("Used H-Score")
         preds = self.svm_model.predict(transformed_X)
+        print("used SVM")
 
         # Temp Hack: FIXIT, ROC Cannot take all values as same class
         tranformed_preds = []

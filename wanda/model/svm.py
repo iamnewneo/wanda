@@ -30,7 +30,8 @@ class SVMModel:
                 labels.append(batch["label"].numpy())
 
         flattened_tranformed_images = torch.cat(tranformed_images)
-        labels = np.asarray(labels).flatten()
+        labels = np.concatenate(labels, axis=0)
+        labels = labels.ravel()
         return flattened_tranformed_images, labels
 
     def fit(self, data_loader):
