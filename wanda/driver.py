@@ -10,21 +10,21 @@ from wanda.model.cnn_hscore import WandaHSCNN
 
 
 def main():
-    # if not file_exists(f"{config.BASE_PATH}/data/processed/train.csv"):
-    #     data_reader = HSDataReader()
-    #     data_reader.process_dataset()
+    if not file_exists(f"{config.BASE_PATH}/data/processed/train.csv"):
+        data_reader = HSDataReader()
+        data_reader.process_dataset()
 
-    # hs_train_loader = create_hs_data_loader(batch_size=config.BATCH_SIZE)
-    # hs_trainer = hs_model_trainer(hs_train_loader, progress_bar_refresh_rate=10)
-    # hs_model = hs_trainer.get_model()
+    hs_train_loader = create_hs_data_loader(batch_size=config.BATCH_SIZE)
+    hs_trainer = hs_model_trainer(hs_train_loader, progress_bar_refresh_rate=10)
+    hs_model = hs_trainer.get_model()
 
-    # if not file_exists(f"{config.BASE_PATH}/models/WandaHSCNN.pt"):
-    #     print("Train H-Score CNN First to train/predict SVM")
-    #     return
+    if not file_exists(f"{config.BASE_PATH}/models/WandaHSCNN.pt"):
+        print("Train H-Score CNN First to train/predict SVM")
+        return
 
-    # svm_model = svm_trainer(hs_train_loader)
-    # model_evaluator = Evaluator()
-    # model_evaluator.evaulate()
+    svm_model = svm_trainer(hs_train_loader)
+    model_evaluator = Evaluator()
+    model_evaluator.evaulate()
 
     visualize_activation_maps()
 
