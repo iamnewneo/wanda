@@ -2,7 +2,7 @@ import torch
 import joblib
 import numpy as np
 from sklearn.svm import OneClassSVM
-from sklearn.linear_model import SGDOneClassSVM
+# from sklearn.linear_model import SGDOneClassSVM
 from sklearn import linear_model
 from wanda import config
 from wanda.model.cnn_hscore import WandaHSCNN
@@ -40,12 +40,12 @@ class SVMModel:
         preprocessed_data, _ = self.get_preprocess_data(data_loader)
         if torch.is_tensor(preprocessed_data):
             preprocessed_data = preprocessed_data.detach().numpy()
-        # self.svm_clf = OneClassSVM(
-        #     gamma="auto", degree=5, max_iter=10000, cache_size=2000, verbose=True
-        # ).fit(preprocessed_data)
-        self.svm_clf = linear_model.SGDOne(
-            max_iter=50000, verbose=True, random_state=42, learning_rate="optimal",
+        self.svm_clf = OneClassSVM(
+            gamma="auto", degree=5, max_iter=10000, cache_size=2000, verbose=True
         ).fit(preprocessed_data)
+        # self.svm_clf = linear_model.SGDOne(
+        #     max_iter=50000, verbose=True, random_state=42, learning_rate="optimal",
+        # ).fit(preprocessed_data)
 
     def predict(self, X):
         if torch.is_tensor(X):
