@@ -29,7 +29,7 @@ class Visualize:
                     ax = plt.subplot(n_rows, 3, i + 1)
                     if i == 0:
                         ax.set_title(f"Input Image Label: {label}")
-                        plt.imshow(image["image"])
+                        plt.imshow(image["image"].permute(1, 2, 0))
                     else:
                         ax.set_title(f"Channel: {i}")
                         sns.heatmap(activation_maps[i - 1], square=True)
