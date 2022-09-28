@@ -15,7 +15,7 @@ class WandaHSCNN(pl.LightningModule):
         self.maxpool1 = nn.MaxPool2d(kernel_size=5)
 
         # Fully connected 1 (readout)
-        self.fc1 = nn.Linear(40000, 1)
+        self.fc1 = nn.Linear(40000, 15)
         self.sigmoid1 = nn.Sigmoid()
 
     def forward(self, x):
