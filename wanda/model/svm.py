@@ -2,7 +2,6 @@ import torch
 import joblib
 import numpy as np
 from sklearn.svm import OneClassSVM
-from sklearn.linear_model import SGDOneClassSVM
 from sklearn import linear_model
 from tqdm import tqdm
 from wanda import config
@@ -44,7 +43,7 @@ class SVMModel:
         # self.svm_clf = OneClassSVM(
         #     gamma="auto", degree=5, max_iter=10000, cache_size=2000, verbose=True
         # ).fit(preprocessed_data)
-        self.svm_clf = linear_model.SGDOne(
+        self.svm_clf = linear_model.SGDOneClassSVM(
             max_iter=50000, verbose=True, random_state=42, learning_rate="optimal",
         ).fit(preprocessed_data)
 
