@@ -25,8 +25,8 @@ class HSWifiTrainDataset(Dataset):
         X_2_path = row["next_image"]
         label = row["label"]
 
-        X_1 = Image.open(X_1_path)
-        X_2 = Image.open(X_2_path)
+        X_1 = Image.open(X_1_path).convert('RGB')
+        X_2 = Image.open(X_2_path).convert('RGB')
         X_1 = self.transform(X_1)
         X_2 = self.transform(X_2)
         return {
