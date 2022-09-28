@@ -1,6 +1,7 @@
 import math
 import torch
 import random
+import numpy as np
 import seaborn as sns
 from collections import defaultdict
 import matplotlib.pyplot as plt
@@ -29,7 +30,8 @@ class Visualize:
                     ax = plt.subplot(n_rows, 3, i + 1)
                     if i == 0:
                         ax.set_title(f"Input Image Label: {label}")
-                        plt.imshow(image["image"].permute(1, 2, 0))
+                        permuted_image = np.moveaxis(image["image"], 0, -1)
+                        plt.imshow(permuted_image)
                     else:
                         ax.set_title(f"Channel: {i}")
                         sns.heatmap(activation_maps[i - 1], square=True)
