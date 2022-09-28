@@ -62,7 +62,7 @@ class HSDataReader:
         )
         df = df.sort_values(by=["snr", "image_index"], ascending=True)
         df["label"] = labels
-        df["next_image"] = df.groupby("snr")["path"].shift(-10)
+        df["next_image"] = df.groupby("snr")["path"].shift(-50)
         df = df.dropna()
 
         return df
