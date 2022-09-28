@@ -12,7 +12,7 @@ configs = {
     },
     "prod": {
         "DEVICE": "cuda",
-        "BATCH_SIZE": 1024,
+        "BATCH_SIZE": 256,
         "TEST_BATCH_SIZE": 16384,
         "MAX_EPOCHS": 200,
         "LR": 0.0001,
