@@ -41,10 +41,19 @@ class SVMModel:
         if torch.is_tensor(preprocessed_data):
             preprocessed_data = preprocessed_data.detach().numpy()
         # self.svm_clf = OneClassSVM(
-        #     gamma="auto", degree=5, max_iter=10000, cache_size=2000, verbose=True
+        #     nu=0.1,
+        #     gamma="auto",
+        #     degree=5,
+        #     max_iter=10000,
+        #     cache_size=2000,
+        #     verbose=True,
         # ).fit(preprocessed_data)
         self.svm_clf = linear_model.SGDOneClassSVM(
-            max_iter=50000, verbose=True, random_state=42, learning_rate="optimal",
+            nu=0.1,
+            max_iter=50000,
+            verbose=True,
+            random_state=42,
+            learning_rate="optimal",
         ).fit(preprocessed_data)
 
     def predict(self, X):

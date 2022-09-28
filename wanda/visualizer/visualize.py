@@ -25,17 +25,28 @@ class Visualize:
                 act_map_len = len(activation_maps)
                 n_rows = math.ceil((act_map_len + 1) / 3)
                 # fig, axs = plt.subplots(n_rows, 3, figsize=(10, 15))
-                plt.figure(figsize=(40, 40))
-                for i in range(act_map_len + 1):
-                    ax = plt.subplot(n_rows, 3, i + 1)
-                    if i == 0:
+                # fig, axes = plt.subplots(nrows=4, ncols=4)
+                # plt.figure(figsize=(40, 40))
+                # for i in range(act_map_len + 1):
+                #     ax = plt.subplot(n_rows, 3, i + 1)
+                #     if i == 0:
+                #         ax.set_title(f"Input Image Label: {label}")
+                #         permuted_image = np.moveaxis(image["image"], 0, -1) * 255
+                #         plt.imshow(permuted_image)
+                #     else:
+                #         ax.set_title(f"Channel: {i}")
+                #         sns.heatmap(activation_maps[i - 1], square=True)
+                plt.tight_layout()
+                fig, axes = plt.subplots(nrows=n_rows, ncols=3, figsize=(10, 15))
+                for i, ax in enumerate(axes.flat, start=1):
+                    if i == 1:
                         ax.set_title(f"Input Image Label: {label}")
-                        permuted_image = np.moveaxis(image["image"], 0, -1)
-                        plt.imshow(permuted_image)
+                        permuted_image = np.moveaxis(image["image"], 0, -1) * 255
+                        ax.imshow(permuted_image)
                     else:
                         ax.set_title(f"Channel: {i}")
                         sns.heatmap(activation_maps[i - 1], square=True)
-                plt.tight_layout()
+                fig.tight_layout()
                 plt.savefig(
                     f"{config.BASE_PATH}/plots/label_{label}_image_idx_{image_idx}_heatmap.png"
                 )
