@@ -4,6 +4,7 @@ import numpy as np
 from sklearn.svm import OneClassSVM
 # from sklearn.linear_model import SGDOneClassSVM
 from sklearn import linear_model
+from tqdm import tqdm
 from wanda import config
 from wanda.model.cnn_hscore import WandaHSCNN
 from wanda.data_loader.data_loader import create_hs_data_loader
@@ -52,7 +53,17 @@ class SVMModel:
             X = X.detach().numpy()
         if self.svm_clf is None:
             self.load_model()
-        return self.svm_clf.predict(X)
+        y_preds = []
+        n = X.shape[0]
+        chunk_size = 1000
+        if n > 1000:
+            for i in tqdm(range(0, n, chunk_size)):
+                chunk = X[i : i + chunk_size]
+                y_preds.extend(self.svm_clf.predict(chunk))
+        else:
+            y_preds = self.svm_clf.predict(X)
+        y_preds = np.array(y_preds).flatten()
+        return y_preds
 
     def save_model(self):
         if self.svm_clf is not None:
