@@ -15,9 +15,12 @@ class LOFModel:
     def fit(self, preprocessed_data):
         if torch.is_tensor(preprocessed_data):
             preprocessed_data = preprocessed_data.detach().numpy()
-        self.lof_clf = LocalOutlierFactor(n_neighbors=50, novelty=True, n_jobs=-1).fit(
-            preprocessed_data
-        )
+        n_jobs = -1
+        if config.ENV == "prod":
+            n_jobs = 8
+        self.lof_clf = LocalOutlierFactor(
+            n_neighbors=50, novelty=True, n_jobs=n_jobs
+        ).fit(preprocessed_data)
 
     def predict(self, X):
         if torch.is_tensor(X):
