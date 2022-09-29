@@ -4,18 +4,15 @@ import numpy as np
 from tqdm import tqdm
 from sklearn.ensemble import IsolationForest
 from wanda import config
-from wanda.model.cnn_hscore import HSCnnDataPreprocessor
 
 
 class IsoForestModel:
     def __init__(self) -> None:
         self.model_name = "Isolation Forest"
-        self.hs_cnn_preprocessor = HSCnnDataPreprocessor()
         self.iso_forest_clf = None
         self.iso_forest_model_path = f"{config.BASE_PATH}/models/IsoForest.pkl"
 
-    def fit(self, data_loader):
-        preprocessed_data, _ = self.hs_cnn_preprocessor.get_preprocess_data(data_loader)
+    def fit(self, preprocessed_data):
         if torch.is_tensor(preprocessed_data):
             preprocessed_data = preprocessed_data.detach().numpy()
         self.iso_forest_clf = IsolationForest(

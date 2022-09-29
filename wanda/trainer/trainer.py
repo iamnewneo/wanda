@@ -27,10 +27,10 @@ def hs_model_trainer(train_dataloader, progress_bar_refresh_rate):
     return trainer
 
 
-def sk_model_trainer(model, data_loader):
+def sk_model_trainer(model, preprocessed_data):
     print("*********************************************")
     print(f"Training: {model.model_name}")
-    model.fit(data_loader)
+    model.fit(preprocessed_data)
     model.save_model()
     print("*********************************************")
     return model

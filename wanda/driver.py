@@ -10,6 +10,7 @@ from wanda.model.cnn_hscore import WandaHSCNN
 from wanda.model.svm import SVMModel
 from wanda.model.isolation_forest import IsoForestModel
 from wanda.model.lof import LOFModel
+from wanda.model.cnn_hscore import HSCnnDataPreprocessor
 
 
 def main():
@@ -24,22 +25,26 @@ def main():
         print("Train H-Score CNN First to train/predict SVM")
         return
 
-    one_class_model_train(hs_train_loader)
+    one_class_model_train()
     evaluate_models()
     visualize_activation_maps()
 
 
-def one_class_model_train(hs_train_loader):
+def one_class_model_train():
+    hs_train_loader = create_hs_data_loader(batch_size=config.BATCH_SIZE)
+    hs_cnn_preprocessor = HSCnnDataPreprocessor()
+    preprocessed_data, _ = hs_cnn_preprocessor.get_preprocess_data(hs_train_loader)
+
     svm_model = SVMModel()
-    svm_model = sk_model_trainer(model=svm_model, data_loader=hs_train_loader)
+    svm_model = sk_model_trainer(model=svm_model, preprocessed_data=preprocessed_data)
 
     iso_forest_model = IsoForestModel()
     iso_forest_model = sk_model_trainer(
-        model=iso_forest_model, data_loader=hs_train_loader
+        model=iso_forest_model, preprocessed_data=preprocessed_data
     )
 
     lof_model = LOFModel()
-    lof_model = sk_model_trainer(model=lof_model, data_loader=hs_train_loader)
+    lof_model = sk_model_trainer(model=lof_model, preprocessed_data=preprocessed_data)
 
 
 def evaluate_models():

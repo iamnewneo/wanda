@@ -5,35 +5,34 @@ from sklearn.svm import OneClassSVM
 from sklearn import linear_model
 from tqdm import tqdm
 from wanda import config
-from wanda.model.cnn_hscore import HSCnnDataPreprocessor
 
 
 class SVMModel:
     def __init__(self) -> None:
         self.model_name = "SVM"
-        self.hs_cnn_preprocessor = HSCnnDataPreprocessor()
         self.svm_clf = None
         self.svm_model_path = f"{config.BASE_PATH}/models/WandaSVM.pkl"
 
-    def fit(self, data_loader):
-        preprocessed_data, _ = self.hs_cnn_preprocessor.get_preprocess_data(data_loader)
+    def fit(self, preprocessed_data):
         if torch.is_tensor(preprocessed_data):
             preprocessed_data = preprocessed_data.detach().numpy()
-        # self.svm_clf = OneClassSVM(
-        #     nu=0.1,
-        #     gamma="auto",
-        #     degree=5,
-        #     max_iter=10000,
-        #     cache_size=2000,
-        #     verbose=True,
-        # ).fit(preprocessed_data)
-        self.svm_clf = linear_model.SGDOneClassSVM(
-            nu=0.1,
-            max_iter=50000,
-            verbose=True,
-            random_state=42,
-            learning_rate="optimal",
-        ).fit(preprocessed_data)
+        try:
+            self.svm_clf = linear_model.SGDOneClassSVM(
+                nu=0.1,
+                max_iter=50000,
+                verbose=True,
+                random_state=42,
+                learning_rate="optimal",
+            ).fit(preprocessed_data)
+        except:
+            self.svm_clf = OneClassSVM(
+                nu=0.1,
+                gamma="auto",
+                degree=5,
+                max_iter=10000,
+                cache_size=2000,
+                verbose=True,
+            ).fit(preprocessed_data)
 
     def predict(self, X):
         if torch.is_tensor(X):
