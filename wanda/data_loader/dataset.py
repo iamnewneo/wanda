@@ -13,7 +13,7 @@ class HSWifiTrainDataset(Dataset):
         else:
             self.df = pd.read_csv(f"{config.BASE_PATH}/data/processed/test.csv")
         if config.ENV == "dev":
-            self.df = self.df.head(300)
+            self.df = self.df.sample(300).reset_index(drop=True)
         self.transform = get_tranforms()
 
     def __len__(self):
@@ -25,8 +25,8 @@ class HSWifiTrainDataset(Dataset):
         X_2_path = row["next_image"]
         label = row["label"]
 
-        X_1 = Image.open(X_1_path).convert('RGB')
-        X_2 = Image.open(X_2_path).convert('RGB')
+        X_1 = Image.open(X_1_path).convert("RGB")
+        X_2 = Image.open(X_2_path).convert("RGB")
         X_1 = self.transform(X_1)
         X_2 = self.transform(X_2)
         return {

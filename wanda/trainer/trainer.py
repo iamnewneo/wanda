@@ -27,13 +27,10 @@ def hs_model_trainer(train_dataloader, progress_bar_refresh_rate):
     return trainer
 
 
-def svm_trainer(data_loader):
-    svm_model = SVMModel()
-    svm_model.fit(data_loader)
-    svm_model.save_model()
-    return svm_model
-
-
-if __name__ == "__main__":
-    # hs_model_trainer()
-    svm_trainer()
+def sk_model_trainer(model, data_loader):
+    print("*********************************************")
+    print(f"Training: {model.model_name}")
+    model.fit(data_loader)
+    model.save_model()
+    print("*********************************************")
+    return model

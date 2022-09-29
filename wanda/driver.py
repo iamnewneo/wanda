@@ -3,10 +3,13 @@ from os.path import exists as file_exists
 from wanda import config
 from wanda.preprocessing.data_reader import HSDataReader
 from wanda.data_loader.data_loader import create_hs_data_loader
-from wanda.trainer.trainer import hs_model_trainer, svm_trainer
+from wanda.trainer.trainer import hs_model_trainer, sk_model_trainer
 from wanda.infer.predict import Evaluator
 from wanda.visualizer.visualize import Visualize
 from wanda.model.cnn_hscore import WandaHSCNN
+from wanda.model.svm import SVMModel
+from wanda.model.isolation_forest import IsoForestModel
+from wanda.model.lof import LOFModel
 
 
 def main():
@@ -16,17 +19,41 @@ def main():
 
     hs_train_loader = create_hs_data_loader(batch_size=config.BATCH_SIZE)
     hs_trainer = hs_model_trainer(hs_train_loader, progress_bar_refresh_rate=10)
-    hs_model = hs_trainer.get_model()
 
     if not file_exists(f"{config.BASE_PATH}/models/WandaHSCNN.pt"):
         print("Train H-Score CNN First to train/predict SVM")
         return
 
-    svm_model = svm_trainer(hs_train_loader)
-    model_evaluator = Evaluator()
+    one_class_model_train(hs_train_loader)
+    evaluate_models()
+    visualize_activation_maps()
+
+
+def one_class_model_train(hs_train_loader):
+    svm_model = SVMModel()
+    svm_model = sk_model_trainer(model=svm_model, data_loader=hs_train_loader)
+
+    iso_forest_model = IsoForestModel()
+    iso_forest_model = sk_model_trainer(
+        model=iso_forest_model, data_loader=hs_train_loader
+    )
+
+    lof_model = LOFModel()
+    lof_model = sk_model_trainer(model=lof_model, data_loader=hs_train_loader)
+
+
+def evaluate_models():
+    svm_model = SVMModel()
+    model_evaluator = Evaluator(model=svm_model)
     model_evaluator.evaulate()
 
-    visualize_activation_maps()
+    iso_f_model = IsoForestModel()
+    model_evaluator = Evaluator(model=iso_f_model)
+    model_evaluator.evaulate()
+
+    lof_model = LOFModel()
+    model_evaluator = Evaluator(model=lof_model)
+    model_evaluator.evaulate()
 
 
 def visualize_activation_maps():
