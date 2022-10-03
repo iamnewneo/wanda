@@ -11,6 +11,7 @@ from wanda.model.svm import SVMModel
 from wanda.model.isolation_forest import IsoForestModel
 from wanda.model.lof import LOFModel
 from wanda.model.cnn_hscore import HSCnnDataPreprocessor
+from wanda.trainer.optimizer import optimize_iso_forest
 
 
 def main():
@@ -28,6 +29,7 @@ def main():
     one_class_model_train()
     evaluate_models()
     visualize_activation_maps()
+    optimize_hyperparameters()
 
 
 def one_class_model_train():
@@ -68,6 +70,25 @@ def visualize_activation_maps():
 
     visualizer = Visualize(hs_cnn=cnn_hs, train=False, n_samples=2)
     visualizer.random_visualize(labels=[1, 0])
+
+
+def optimize_hyperparameters():
+    hs_test_loader = create_hs_data_loader(
+        batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=True
+    )
+    hs_cnn_preprocessor = HSCnnDataPreprocessor()
+    transformed_X, labels = hs_cnn_preprocessor.get_preprocess_data(hs_test_loader)
+    if torch.is_tensor(transformed_X):
+        transformed_X = transformed_X.detach().numpy()
+
+    if torch.is_tensor(labels):
+        labels = labels.detach().numpy()
+
+    best_study = optimize_iso_forest(transformed_X, labels)
+
+    print(
+        f"Isolation Forest Best Params: {best_study.best_params}. Best Value: {-1*best_study.best_value}"
+    )
 
 
 if __name__ == "__main__":
