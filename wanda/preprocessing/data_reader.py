@@ -1,7 +1,5 @@
-import os
 import glob
 import pandas as pd
-from scipy.io import loadmat
 from wanda import config
 
 DATA_DIR = f"{config.BASE_PATH}/data"
@@ -46,25 +44,48 @@ class HSDataReader:
         df = pd.concat(df_list, ignore_index=True)
         return df
 
+    def clean_df(self, df):
+        df["label_shifted"] = df["label"].shift(-3)
+        df["label_shifted"] = df["label_shifted"].fillna(0)
+        df["label_shifted"] = df["label_shifted"] + df["label"]
+        df["label_shifted"] = df["label_shifted"].astype(int)
+        df = df[df.label_shifted != 1].reset_index(drop=True)
+        return df
+
     def get_df_from_folder(self, folder_path, snr):
         snr_files = glob.glob(f"{folder_path}/*.png", recursive=True)
-        # For Train label = 0
-        labels = 0
-        if not self.train:
-            labels = loadmat(f"{folder_path}/groundTruth.mat")["groundTruth"][0]
-            labels = labels[: len(snr_files)]
 
         df = pd.DataFrame()
         df["path"] = snr_files
         df["snr"] = snr
-        df["image_index"] = (
-            df["path"].apply(lambda x: x.split("_")[-1].replace(".png", "")).astype(int)
-        )
+        if self.train:
+            df["image_index"] = (
+                df["path"]
+                .apply(lambda x: x.split("_")[-1].replace(".png", ""))
+                .astype(int)
+            )
+        else:
+            df["image_index"] = (
+                df["path"]
+                .apply(lambda x: x.split("_")[-2].replace(".png", ""))
+                .astype(int)
+            )
         df = df.sort_values(by=["snr", "image_index"], ascending=True)
-        df["label"] = labels
+
+        # For Train label = 0
+        df["label"] = 0
+        if not self.train:
+            df["label_STR"] = df["path"].apply(
+                lambda x: x.split("_")[-1].replace(".png", "")
+            )
+            df["label"] = (
+                df["label_STR"].apply(lambda x: 1 if x == "ON" else 0).astype(int)
+            )
         df["next_image"] = df.groupby("snr")["path"].shift(-50)
         df = df.dropna()
 
+        df = self.clean_df(df)
+        df = df[self.headers]
         return df
 
     def get_train_df(self):
