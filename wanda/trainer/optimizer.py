@@ -28,10 +28,10 @@ def optimize_iso_forest_fn(trial, transformed_X, labels):
     return -1 * auc_score
 
 
-def optimize_iso_forest(transformed_X, labels):
+def optimize_iso_forest(transformed_X, labels, n_trials):
     study = optuna.create_study(direction="minimize")
     study.optimize(
-        lambda trial: optimize_iso_forest_fn(trial, transformed_X, labels), n_trials=50
+        lambda trial: optimize_iso_forest_fn(trial, transformed_X, labels), n_trials=n_trials
     )
     return study
 
