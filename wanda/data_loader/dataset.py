@@ -30,7 +30,7 @@ class HSWifiTrainDataset(Dataset):
         X_1 = self.transform(X_1)
         X_2 = self.transform(X_2)
         return {
-            "X_1": X_1.type(torch.float32) / 255,
-            "X_2": X_2.type(torch.float32) / 255,
+            "X_1": X_1.type(torch.float32),
+            "X_2": X_2.type(torch.float32),
             "label": label,
         }
