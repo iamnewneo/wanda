@@ -8,15 +8,15 @@ configs = {
         "TEST_BATCH_SIZE": 256,
         "MAX_EPOCHS": 1,
         "LR": 0.1,
-        "N_WORKER": 0
+        "N_WORKER": 0,
     },
     "prod": {
         "DEVICE": "cuda",
         "BATCH_SIZE": 256,
         "TEST_BATCH_SIZE": 16384,
-        "MAX_EPOCHS": 100,
-        "LR": 0.0001,
-        "N_WORKER": 16
+        "MAX_EPOCHS": 50,
+        "LR": 0.00005,
+        "N_WORKER": 32,
     },
 }
 
