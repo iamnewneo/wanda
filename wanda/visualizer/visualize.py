@@ -5,6 +5,7 @@ import numpy as np
 import seaborn as sns
 from collections import defaultdict
 import matplotlib.pyplot as plt
+from wanda.utils.util import un_norm_image
 from wanda.preprocessing.data_reader import DATA_DIR
 from wanda.data_loader.dataset import HSWifiTrainDataset
 from wanda import config
@@ -28,8 +29,9 @@ class Visualize:
                 for i, ax in enumerate(axes.flat, start=0):
                     if i == 0:
                         ax.set_title(f"Input Image Label: {label}")
-                        permuted_image = np.moveaxis(image["image"], 0, -1) * 255
-                        ax.imshow(permuted_image)
+                        # permuted_image = np.moveaxis(image["image"], 0, -1)
+                        permuted_image = un_norm_image(image["image"])
+                        ax.imshow(permuted_image.detach().numpy())
                     else:
                         ax.set_title(f"Channel: {i}")
                         sns.heatmap(activation_maps[i - 1], square=True, ax=ax)
