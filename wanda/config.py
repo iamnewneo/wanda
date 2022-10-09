@@ -14,7 +14,7 @@ configs = {
         "DEVICE": "cuda",
         "BATCH_SIZE": 256,
         "TEST_BATCH_SIZE": 16384,
-        "MAX_EPOCHS": 200,
+        "MAX_EPOCHS": 100,
         "LR": 0.0001,
         "N_WORKER": 16
     },

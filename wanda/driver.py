@@ -45,8 +45,8 @@ def one_class_model_train():
         model=iso_forest_model, preprocessed_data=preprocessed_data
     )
 
-    lof_model = LOFModel()
-    lof_model = sk_model_trainer(model=lof_model, preprocessed_data=preprocessed_data)
+    # lof_model = LOFModel()
+    # lof_model = sk_model_trainer(model=lof_model, preprocessed_data=preprocessed_data)
 
 
 def evaluate_models():
@@ -58,9 +58,9 @@ def evaluate_models():
     model_evaluator = Evaluator(model=iso_f_model)
     model_evaluator.evaulate()
 
-    lof_model = LOFModel()
-    model_evaluator = Evaluator(model=lof_model)
-    model_evaluator.evaulate()
+    # lof_model = LOFModel()
+    # model_evaluator = Evaluator(model=lof_model)
+    # model_evaluator.evaulate()
 
 
 def visualize_activation_maps():
@@ -84,7 +84,7 @@ def optimize_hyperparameters():
     if torch.is_tensor(labels):
         labels = labels.detach().numpy()
 
-    best_study = optimize_iso_forest(transformed_X, labels)
+    best_study = optimize_iso_forest(transformed_X, labels, n_trials=100)
 
     print(
         f"Isolation Forest Best Params: {best_study.best_params}. Best Value: {-1*best_study.best_value}"
