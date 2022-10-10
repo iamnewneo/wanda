@@ -8,7 +8,7 @@ import pytorch_lightning as pl
 class WandaHSCNN(pl.LightningModule):
     def __init__(self):
         super(WandaHSCNN, self).__init__()
-        self.cnn1 = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=10, stride=1)
+        self.cnn1 = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=3, stride=1)
         self.relu1 = nn.ReLU()
 
         # Max pool 1
@@ -17,10 +17,10 @@ class WandaHSCNN(pl.LightningModule):
         self.cnn2 = nn.Conv2d(in_channels=16, out_channels=8, kernel_size=10, stride=1)
         self.relu2 = nn.ReLU()
 
-        self.maxpool2 = nn.MaxPool2d(kernel_size=3)
+        self.maxpool2 = nn.MaxPool2d(kernel_size=10)
 
         # Fully connected 1 (readout)
-        self.fc1 = nn.Linear(4608, 15)
+        self.fc1 = nn.Linear(288, 15)
         self.sigmoid1 = nn.Sigmoid()
 
     def forward(self, x):
