@@ -43,7 +43,7 @@ def optimize_svm_fn(trial, transformed_X, labels):
             max_iter=50000,
             random_state=42,
             learning_rate="optimal",
-            tol=1e-7,
+            tol=1e-5,
             power_t=power_t,
         ).fit(X_train)
     except:
