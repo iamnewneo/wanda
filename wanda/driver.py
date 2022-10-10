@@ -11,7 +11,7 @@ from wanda.model.svm import SVMModel
 from wanda.model.isolation_forest import IsoForestModel
 from wanda.model.lof import LOFModel
 from wanda.model.cnn_hscore import HSCnnDataPreprocessor
-from wanda.trainer.optimizer import optimize_iso_forest
+from wanda.trainer.optimizer import optimize_iso_forest, optimize_svm
 
 
 def main():
@@ -84,10 +84,16 @@ def optimize_hyperparameters():
     if torch.is_tensor(labels):
         labels = labels.detach().numpy()
 
-    best_study = optimize_iso_forest(transformed_X, labels, n_trials=100)
+    best_study_iso = optimize_iso_forest(transformed_X, labels, n_trials=100)
 
     print(
-        f"Isolation Forest Best Params: {best_study.best_params}. Best Value: {-1*best_study.best_value}"
+        f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
+    )
+
+    best_study_svm = optimize_svm(transformed_X, labels, n_trials=100)
+
+    print(
+        f"Isolation Forest Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
     )
 
 
