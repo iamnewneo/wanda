@@ -27,6 +27,8 @@ class Visualize:
                 act_map_len = len(activation_maps)
                 n_rows = math.ceil((act_map_len + 1) / 3)
                 fig, axes = plt.subplots(nrows=n_rows, ncols=3, figsize=(15, 15))
+                vmin = 0
+                vmax = activation_maps.max()
                 for i, ax in enumerate(axes.flat, start=0):
                     if i == 0:
                         ax.set_title(f"Input Image Label: {label}")
@@ -35,16 +37,14 @@ class Visualize:
                         permuted_image = np.moveaxis(permuted_image, 0, -1)
                         ax.imshow(permuted_image)
                     else:
-                        cmap = mpl.cm.magma
-                        norm = mpl.colors.Normalize(vmin=0)
-                        fig.colorbar(
-                            mpl.cm.ScalarMappable(norm=norm, cmap=cmap),
-                            cax=ax,
-                            orientation="horizontal",
-                            label="Some Units",
-                        )
                         ax.set_title(f"Channel: {i}")
-                        sns.heatmap(activation_maps[i - 1], square=True, ax=ax)
+                        sns.heatmap(
+                            activation_maps[i - 1],
+                            square=True,
+                            ax=ax,
+                            vmin=vmin,
+                            vmax=vmax,
+                        )
                 fig.tight_layout()
                 plt.savefig(
                     f"{config.BASE_PATH}/plots/label_{label}_image_idx_{image_idx}_heatmap.png"
