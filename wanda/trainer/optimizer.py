@@ -32,8 +32,8 @@ def optimize_iso_forest_fn(trial, transformed_X, labels):
 
 def optimize_svm_fn(trial, transformed_X, labels):
     svm_clf = None
-    nu = trial.suggest_uniform("max_features", 0.05, 0.95)
-    power_t = trial.suggest_uniform("max_features", 0.1, 0.9)
+    nu = trial.suggest_uniform("nu", 0.05, 0.95)
+    power_t = trial.suggest_uniform("power_t", 0.1, 0.9)
     X_train, X_val, y_train, y_val = train_test_split(
         transformed_X, labels, random_state=0
     )
