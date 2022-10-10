@@ -29,9 +29,10 @@ class Visualize:
                 for i, ax in enumerate(axes.flat, start=0):
                     if i == 0:
                         ax.set_title(f"Input Image Label: {label}")
-                        # permuted_image = np.moveaxis(image["image"], 0, -1)
-                        permuted_image = un_norm_image(image["image"])
-                        ax.imshow(permuted_image.detach().numpy())
+                        permuted_image = un_norm_image(torch.from_numpy(image["image"]))
+                        permuted_image = permuted_image.detach().numpy()
+                        permuted_image = np.moveaxis(permuted_image, 0, -1)
+                        ax.imshow(permuted_image)
                     else:
                         ax.set_title(f"Channel: {i}")
                         sns.heatmap(activation_maps[i - 1], square=True, ax=ax)

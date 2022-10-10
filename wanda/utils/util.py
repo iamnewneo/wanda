@@ -11,15 +11,16 @@ def get_tranforms():
             transforms.Resize(224),
             transforms.CenterCrop(224),
             transforms.ToTensor(),
-            transforms.Normalize(mean=MEAN, std=STD),
+            # transforms.Normalize(mean=MEAN, std=STD),
             # transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
         ]
     )
 
 
 def un_norm_image(image_tensor):
-    unorm_tranform = UnNormalize(mean=MEAN, std=STD)
-    return unorm_tranform(image_tensor)
+    # unorm_tranform = UnNormalize(mean=MEAN, std=STD)
+    # return unorm_tranform(image_tensor)
+    return image_tensor * 255
 
 
 class UnNormalize(object):

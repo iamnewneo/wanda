@@ -12,7 +12,12 @@ class WandaHSCNN(pl.LightningModule):
         self.relu1 = nn.ReLU()
 
         # Max pool 1
-        self.maxpool1 = nn.MaxPool2d(kernel_size=10)
+        self.maxpool1 = nn.MaxPool2d(kernel_size=3)
+
+        self.cnn2 = nn.Conv2d(in_channels=8, out_channels=8, kernel_size=9, stride=1)
+        self.relu2 = nn.ReLU()
+
+        self.maxpool2 = nn.MaxPool2d(kernel_size=3)
 
         # Fully connected 1 (readout)
         self.fc1 = nn.Linear(3528, 15)
@@ -22,6 +27,9 @@ class WandaHSCNN(pl.LightningModule):
         out = self.cnn1(x)
         out = self.relu1(out)
         out = self.maxpool1(out)
+        out = self.cnn2(out)
+        out = self.relu2(out)
+        out = self.maxpool2(out)
         activation_maps = out
         out = out.view(out.size(0), -1)
         out = self.fc1(out)
