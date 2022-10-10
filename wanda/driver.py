@@ -93,7 +93,7 @@ def optimize_hyperparameters():
     best_study_svm = optimize_svm(transformed_X, labels, n_trials=100)
 
     print(
-        f"Isolation Forest Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
+        f"SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
     )
 
 
