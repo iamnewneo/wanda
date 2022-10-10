@@ -5,6 +5,7 @@ import numpy as np
 import seaborn as sns
 from collections import defaultdict
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 from wanda.utils.util import un_norm_image
 from wanda.preprocessing.data_reader import DATA_DIR
 from wanda.data_loader.dataset import HSWifiTrainDataset
@@ -34,6 +35,14 @@ class Visualize:
                         permuted_image = np.moveaxis(permuted_image, 0, -1)
                         ax.imshow(permuted_image)
                     else:
+                        cmap = mpl.cm.magma
+                        norm = mpl.colors.Normalize(vmin=0)
+                        fig.colorbar(
+                            mpl.cm.ScalarMappable(norm=norm, cmap=cmap),
+                            cax=ax,
+                            orientation="horizontal",
+                            label="Some Units",
+                        )
                         ax.set_title(f"Channel: {i}")
                         sns.heatmap(activation_maps[i - 1], square=True, ax=ax)
                 fig.tight_layout()
