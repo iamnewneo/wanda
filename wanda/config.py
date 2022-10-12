@@ -9,6 +9,7 @@ configs = {
         "MAX_EPOCHS": 1,
         "LR": 0.1,
         "N_WORKER": 0,
+        "N_OPT_TRIALS": 1,
     },
     "prod": {
         "DEVICE": "cuda",
@@ -17,6 +18,7 @@ configs = {
         "MAX_EPOCHS": 25,
         "LR": 0.00005,
         "N_WORKER": 32,
+        "N_OPT_TRIALS": 100,
     },
 }
 
@@ -35,3 +37,4 @@ MAX_EPOCHS = configs[ENV]["MAX_EPOCHS"]
 LR = configs[ENV]["LR"]
 TEST_BATCH_SIZE = configs[ENV]["TEST_BATCH_SIZE"]
 N_WORKER = configs[ENV]["N_WORKER"]
+N_OPT_TRIALS = configs[ENV]["N_OPT_TRIALS"]

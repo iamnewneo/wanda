@@ -10,8 +10,13 @@ from wanda.model.cnn_hscore import WandaHSCNN
 from wanda.model.svm import SVMModel
 from wanda.model.isolation_forest import IsoForestModel
 from wanda.model.lof import LOFModel
-from wanda.preprocessing.preprocessor import HSCnnDataPreprocessor
-from wanda.trainer.optimizer import optimize_iso_forest, optimize_svm
+from wanda.preprocessing.preprocessor import HSCnnDataPreprocessor, SkDataPreprocessor
+from wanda.trainer.optimizer import (
+    optimize_iso_forest,
+    optimize_svm,
+    optimize_svdd,
+    optimize_ecod,
+)
 
 
 def main():
@@ -29,7 +34,8 @@ def main():
     one_class_model_train()
     evaluate_models()
     visualize_activation_maps()
-    optimize_hyperparameters()
+    optimize_hyperparameters_hscore_input()
+    optimize_hyperparameters_plain_input()
 
 
 def one_class_model_train():
@@ -72,7 +78,7 @@ def visualize_activation_maps():
     visualizer.random_visualize(labels=[1, 0])
 
 
-def optimize_hyperparameters():
+def optimize_hyperparameters_hscore_input():
     hs_test_loader = create_hs_data_loader(
         batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=True
     )
@@ -84,17 +90,99 @@ def optimize_hyperparameters():
     if torch.is_tensor(labels):
         labels = labels.detach().numpy()
 
-    best_study_iso = optimize_iso_forest(transformed_X, labels, n_trials=100)
-
+    print("*" * 100)
+    print("Models Performance with H-Score Input")
+    print("*" * 100)
+    best_study_iso = optimize_iso_forest(
+        transformed_X, labels, n_trials=config.N_OPT_TRIALS
+    )
     print(
         f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
     )
-
-    best_study_svm = optimize_svm(transformed_X, labels, n_trials=100)
-
+    best_study_svm = optimize_svm(transformed_X, labels, n_trials=config.N_OPT_TRIALS)
     print(
         f"SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
     )
+    best_study_ecod = optimize_ecod(transformed_X, labels, n_trials=config.N_OPT_TRIALS)
+    print(
+        f"ECOD Best Params: {best_study_ecod.best_params}. Best Value: {-1*best_study_ecod.best_value}"
+    )
+    n_trials = 3
+    if config.ENV == "dev":
+        n_trials = 1
+    best_study_svdd = optimize_svdd(transformed_X, labels, n_trials=n_trials)
+    print(
+        f"Deep SVDD Best Params: {best_study_svdd.best_params}. Best Value: {-1*best_study_svdd.best_value}"
+    )
+
+    print("*" * 100)
+    print("*" * 100)
+    print("Summary")
+    print(
+        f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
+    )
+    print(
+        f"SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
+    )
+    print(
+        f"ECOD Best Params: {best_study_ecod.best_params}. Best Value: {-1*best_study_ecod.best_value}"
+    )
+    print(
+        f"Deep SVDD Best Params: {best_study_svdd.best_params}. Best Value: {-1*best_study_svdd.best_value}"
+    )
+    print("*" * 100)
+    print("*" * 100)
+
+
+def optimize_hyperparameters_plain_input():
+    test_loader = create_hs_data_loader(
+        batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=True, greyscale=True
+    )
+    sk_data_preprocessor = SkDataPreprocessor()
+    transformed_X, labels = sk_data_preprocessor.get_preprocess_data(
+        data_loader=test_loader
+    )
+    print("*" * 100)
+    print("Models Performance without H-Score Input/Plain Input")
+    print("*" * 100)
+    best_study_iso = optimize_iso_forest(
+        transformed_X, labels, n_trials=config.N_OPT_TRIALS
+    )
+    print(
+        f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
+    )
+    best_study_svm = optimize_svm(transformed_X, labels, n_trials=config.N_OPT_TRIALS)
+    print(
+        f"SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
+    )
+    best_study_ecod = optimize_ecod(transformed_X, labels, n_trials=config.N_OPT_TRIALS)
+    print(
+        f"ECOD Best Params: {best_study_ecod.best_params}. Best Value: {-1*best_study_ecod.best_value}"
+    )
+    n_trials = 3
+    if config.ENV == "dev":
+        n_trials = 1
+    best_study_svdd = optimize_svdd(transformed_X, labels, n_trials=n_trials)
+    print(
+        f"Deep SVDD Best Params: {best_study_svdd.best_params}. Best Value: {-1*best_study_svdd.best_value}"
+    )
+    print("*" * 100)
+    print("*" * 100)
+    print("Summary")
+    print(
+        f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
+    )
+    print(
+        f"SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
+    )
+    print(
+        f"ECOD Best Params: {best_study_ecod.best_params}. Best Value: {-1*best_study_ecod.best_value}"
+    )
+    print(
+        f"Deep SVDD Best Params: {best_study_svdd.best_params}. Best Value: {-1*best_study_svdd.best_value}"
+    )
+    print("*" * 100)
+    print("*" * 100)
 
 
 if __name__ == "__main__":
