@@ -7,7 +7,7 @@ from wanda.utils.util import get_tranforms
 
 
 class HSWifiTrainDataset(Dataset):
-    def __init__(self, train):
+    def __init__(self, train, greyscale=False):
         if train:
             self.df = pd.read_csv(f"{config.BASE_PATH}/data/processed/train.csv")
         else:
@@ -15,6 +15,7 @@ class HSWifiTrainDataset(Dataset):
         if config.ENV == "dev":
             self.df = self.df.sample(300).reset_index(drop=True)
         self.transform = get_tranforms()
+        self.greyscale = greyscale
 
     def __len__(self):
         return len(self.df)
@@ -25,8 +26,12 @@ class HSWifiTrainDataset(Dataset):
         X_2_path = row["next_image"]
         label = row["label"]
 
-        X_1 = Image.open(X_1_path).convert("RGB")
-        X_2 = Image.open(X_2_path).convert("RGB")
+        if self.greyscale:
+            X_1 = Image.open(X_1_path).convert("L")
+            X_2 = Image.open(X_2_path).convert("L")
+        else:
+            X_1 = Image.open(X_1_path).convert("RGB")
+            X_2 = Image.open(X_2_path).convert("RGB")
         X_1 = self.transform(X_1)
         X_2 = self.transform(X_2)
         return {

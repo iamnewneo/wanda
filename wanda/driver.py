@@ -10,7 +10,7 @@ from wanda.model.cnn_hscore import WandaHSCNN
 from wanda.model.svm import SVMModel
 from wanda.model.isolation_forest import IsoForestModel
 from wanda.model.lof import LOFModel
-from wanda.model.cnn_hscore import HSCnnDataPreprocessor
+from wanda.preprocessing.preprocessor import HSCnnDataPreprocessor
 from wanda.trainer.optimizer import optimize_iso_forest, optimize_svm
 
 

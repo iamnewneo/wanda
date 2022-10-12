@@ -1,7 +1,7 @@
 from os.path import exists as file_exists
 from sklearn.metrics import accuracy_score, roc_auc_score
 from wanda import config
-from wanda.model.cnn_hscore import HSCnnDataPreprocessor
+from wanda.preprocessing.preprocessor import HSCnnDataPreprocessor
 from wanda.preprocessing.data_reader import HSDataReader
 from wanda.data_loader.data_loader import create_hs_data_loader
 
