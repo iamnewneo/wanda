@@ -60,7 +60,7 @@ class DeepSVDDModel:
     def fit(self, preprocessed_data):
         if torch.is_tensor(preprocessed_data):
             preprocessed_data = preprocessed_data.detach().numpy()
-        epochs = 10
+        epochs = 30
         if config.ENV == "DEV":
             epochs = 1
         self.deep_svd_clf = DeepSVDD(
