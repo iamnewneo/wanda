@@ -64,7 +64,12 @@ class DeepSVDDModel:
         if config.ENV == "DEV":
             epochs = 1
         self.deep_svd_clf = DeepSVDD(
-            use_ae=True, contamination=self.contamination, epochs=epochs
+            use_ae=True,
+            hidden_neurons=[128, 64, 32],
+            contamination=self.contamination,
+            epochs=epochs,
+            batch_size=config.BATCH_SIZE,
+            validation_size=0.2,
         ).fit(preprocessed_data)
 
     def predict(self, X):

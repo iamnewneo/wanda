@@ -93,11 +93,11 @@ def optimize_hyperparameters_hscore_input():
     print("*" * 100)
     print("Models Performance with H-Score Input")
     print("*" * 100)
-    best_study_iso = optimize_iso_forest(
-        transformed_X, labels, n_trials=config.N_OPT_TRIALS
-    )
-    print(
-        f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
+    # best_study_iso = optimize_iso_forest(
+    #     transformed_X, labels, n_trials=config.N_OPT_TRIALS
+    # )
+    # print(
+    #     f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
     )
     best_study_svm = optimize_svm(transformed_X, labels, n_trials=config.N_OPT_TRIALS)
     print(
@@ -118,9 +118,9 @@ def optimize_hyperparameters_hscore_input():
     print("*" * 100)
     print("*" * 100)
     print("Summary: Models Performance with H-Score Input")
-    print(
-        f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
-    )
+    # print(
+    #     f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
+    # )
     print(
         f"SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
     )
@@ -145,12 +145,12 @@ def optimize_hyperparameters_plain_input():
     print("*" * 100)
     print("Models Performance without H-Score Input/Plain Input")
     print("*" * 100)
-    best_study_iso = optimize_iso_forest(
-        transformed_X, labels, n_trials=config.N_OPT_TRIALS
-    )
-    print(
-        f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
-    )
+    # best_study_iso = optimize_iso_forest(
+    #     transformed_X, labels, n_trials=config.N_OPT_TRIALS
+    # )
+    # print(
+    #     f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
+    # )
     best_study_svm = optimize_svm(transformed_X, labels, n_trials=config.N_OPT_TRIALS)
     print(
         f"SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
@@ -169,9 +169,9 @@ def optimize_hyperparameters_plain_input():
     print("*" * 100)
     print("*" * 100)
     print("Summary: Models Performance without H-Score Input/Plain Input")
-    print(
-        f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
-    )
+    # print(
+    #     f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
+    # )
     print(
         f"SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
     )
