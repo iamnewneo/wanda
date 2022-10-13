@@ -98,7 +98,7 @@ def optimize_hyperparameters_hscore_input():
     # )
     # print(
     #     f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
-    )
+    # )
     best_study_svm = optimize_svm(transformed_X, labels, n_trials=config.N_OPT_TRIALS)
     print(
         f"SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
