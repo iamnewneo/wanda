@@ -25,6 +25,7 @@ class HSWifiTrainDataset(Dataset):
         X_1_path = row["path"]
         X_2_path = row["next_image"]
         label = row["label"]
+        _id = row["id"]
 
         if self.greyscale:
             X_1 = Image.open(X_1_path).convert("L")
@@ -38,4 +39,5 @@ class HSWifiTrainDataset(Dataset):
             "X_1": X_1.type(torch.float32) / 255,
             "X_2": X_2.type(torch.float32) / 255,
             "label": label,
+            "id": _id,
         }

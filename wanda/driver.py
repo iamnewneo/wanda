@@ -32,10 +32,10 @@ def main():
         return
 
     one_class_model_train()
-    evaluate_models()
     visualize_activation_maps()
     optimize_hyperparameters_hscore_input()
     optimize_hyperparameters_plain_input()
+    evaluate_best_models()
 
 
 def one_class_model_train():
@@ -55,7 +55,7 @@ def one_class_model_train():
     # lof_model = sk_model_trainer(model=lof_model, preprocessed_data=preprocessed_data)
 
 
-def evaluate_models():
+def evaluate_best_models():
     svm_model = SVMModel()
     model_evaluator = Evaluator(model=svm_model)
     model_evaluator.evaulate()
@@ -117,7 +117,7 @@ def optimize_hyperparameters_hscore_input():
 
     print("*" * 100)
     print("*" * 100)
-    print("Summary")
+    print("Summary: Models Performance with H-Score Input")
     print(
         f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
     )
@@ -168,7 +168,7 @@ def optimize_hyperparameters_plain_input():
     )
     print("*" * 100)
     print("*" * 100)
-    print("Summary")
+    print("Summary: Models Performance without H-Score Input/Plain Input")
     print(
         f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
     )

@@ -7,6 +7,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.svm import OneClassSVM
 from sklearn import linear_model
 from wanda.model.od_algos import DeepSVDDModel, ECODModel
+from wanda import config
 
 
 def optimize_iso_forest_fn(trial, transformed_X, labels):
@@ -21,7 +22,7 @@ def optimize_iso_forest_fn(trial, transformed_X, labels):
         n_estimators=n_estimators,
         max_features=max_features,
         contamination=contamination,
-        n_jobs=-1,
+        n_jobs=config.N_JOBS,
     )
     iso_forest_clf.fit(X_train)
     y_pred = iso_forest_clf.predict(X_val)
@@ -91,6 +92,7 @@ def optimize_iso_forest(transformed_X, labels, n_trials):
     study.optimize(
         lambda trial: optimize_iso_forest_fn(trial, transformed_X, labels),
         n_trials=n_trials,
+        n_jobs=config.N_JOBS,
     )
     return study
 
@@ -98,7 +100,9 @@ def optimize_iso_forest(transformed_X, labels, n_trials):
 def optimize_svm(transformed_X, labels, n_trials):
     study = optuna.create_study(direction="minimize")
     study.optimize(
-        lambda trial: optimize_svm_fn(trial, transformed_X, labels), n_trials=n_trials,
+        lambda trial: optimize_svm_fn(trial, transformed_X, labels),
+        n_trials=n_trials,
+        n_jobs=config.N_JOBS,
     )
     return study
 
@@ -108,6 +112,7 @@ def optimize_svdd(transformed_X, labels, n_trials):
     study.optimize(
         lambda trial: optimize_deep_svdd_fn(trial, transformed_X, labels),
         n_trials=n_trials,
+        n_jobs=4,
     )
     return study
 
@@ -115,6 +120,8 @@ def optimize_svdd(transformed_X, labels, n_trials):
 def optimize_ecod(transformed_X, labels, n_trials):
     study = optuna.create_study(direction="minimize")
     study.optimize(
-        lambda trial: optimize_ecod_fn(trial, transformed_X, labels), n_trials=n_trials,
+        lambda trial: optimize_ecod_fn(trial, transformed_X, labels),
+        n_trials=n_trials,
+        n_jobs=config.N_JOBS,
     )
     return study

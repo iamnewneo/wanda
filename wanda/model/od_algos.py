@@ -20,9 +20,9 @@ class ECODModel:
         n_jobs = 16
         if config.ENV == "dev":
             n_jobs = -1
-        self.ecod_clf = ECOD(contamination=self.contamination, n_jobs=n_jobs).fit(
-            preprocessed_data
-        )
+        self.ecod_clf = ECOD(
+            contamination=self.contamination, n_jobs=config.N_JOBS
+        ).fit(preprocessed_data)
 
     def predict(self, X):
         if torch.is_tensor(X):

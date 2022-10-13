@@ -19,7 +19,7 @@ class HSDataReader:
         self.sig_snr_10 = f"{_data_dir}/WiFi2_10"
         self.sig_snr_20 = f"{_data_dir}/WiFi2_20"
         self.processed_data_path = f"{DATA_DIR}/processed"
-        self.headers = ["path", "snr", "image_index", "next_image", "label"]
+        self.headers = ["id", "path", "snr", "image_index", "next_image", "label"]
 
     def get_snr_path(self, snr):
         if snr == -10:
@@ -85,6 +85,7 @@ class HSDataReader:
         df = df.dropna()
 
         df = self.clean_df(df)
+        df["id"] = df["image_index"].astype(str) + "_" + df["path"]
         df = df[self.headers]
         return df
 

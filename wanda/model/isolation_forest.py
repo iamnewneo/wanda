@@ -16,7 +16,7 @@ class IsoForestModel:
         if torch.is_tensor(preprocessed_data):
             preprocessed_data = preprocessed_data.detach().numpy()
         self.iso_forest_clf = IsolationForest(
-            random_state=42, n_estimators=200, max_features=0.5, n_jobs=-1
+            random_state=42, n_estimators=200, max_features=0.5, n_jobs=config.N_JOBS
         ).fit(preprocessed_data)
 
     def predict(self, X):

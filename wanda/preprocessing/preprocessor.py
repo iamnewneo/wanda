@@ -14,9 +14,10 @@ class HSCnnDataPreprocessor:
         )
         self.cnn_hs.eval()
 
-    def get_preprocess_data(self, data_loader):
+    def get_preprocess_data(self, data_loader, ids=False):
         tranformed_images = []
         labels = []
+        ids_list = []
         with torch.no_grad():
             for idx, batch in enumerate(data_loader):
                 X_1_images = batch["X_1"]
@@ -24,10 +25,14 @@ class HSCnnDataPreprocessor:
                 activation_maps = torch.flatten(activation_maps, start_dim=1)
                 tranformed_images.append(activation_maps)
                 labels.append(batch["label"].numpy())
+                ids_list.append(batch["id"])
 
         flattened_tranformed_images = torch.cat(tranformed_images)
         labels = np.concatenate(labels, axis=0)
         labels = labels.ravel()
+        ids_list = [item for sublist in ids_list for item in sublist]
+        if ids:
+            return flattened_tranformed_images, labels, ids_list
         return flattened_tranformed_images, labels
 
 
@@ -35,9 +40,10 @@ class SkDataPreprocessor:
     def __init__(self) -> None:
         pass
 
-    def get_preprocess_data(self, data_loader):
+    def get_preprocess_data(self, data_loader, ids=False):
         tranformed_images = []
         labels = []
+        ids_list = []
         with torch.no_grad():
             for idx, batch in enumerate(data_loader):
                 X_1_images = batch["X_1"]
@@ -46,8 +52,12 @@ class SkDataPreprocessor:
                 image_np_array = image_np_array.reshape((image_np_array.shape[0], -1))
                 tranformed_images.append(image_np_array)
                 labels.append(batch["label"].numpy())
+                ids_list.append(batch["id"])
 
         flattened_tranformed_images = np.concatenate(tranformed_images)
         labels = np.concatenate(labels, axis=0)
         labels = labels.ravel()
+        ids_list = [item for sublist in ids_list for item in sublist]
+        if ids:
+            return flattened_tranformed_images, labels, ids_list
         return flattened_tranformed_images, labels
