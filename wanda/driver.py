@@ -159,7 +159,7 @@ def optimize_hyperparameters_plain_input():
     print(
         f"ECOD Best Params: {best_study_ecod.best_params}. Best Value: {-1*best_study_ecod.best_value}"
     )
-    n_trials = 3
+    n_trials = 5
     if config.ENV == "dev":
         n_trials = 1
     best_study_svdd = optimize_svdd(transformed_X, labels, n_trials=n_trials)
