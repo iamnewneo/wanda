@@ -1,8 +1,7 @@
 import torch
-from torch import nn
 import numpy as np
 from wanda import config
-import pytorch_lightning as pl
+from sklearn.decomposition import TruncatedSVD
 from wanda.model.cnn_hscore import WandaHSCNN
 
 
@@ -13,6 +12,13 @@ class HSCnnDataPreprocessor:
             torch.load(f"{config.BASE_PATH}/models/WandaHSCNN.pt")
         )
         self.cnn_hs.eval()
+        self.svd = None
+
+    def svd_transform(self, X):
+        if self.svd is None:
+            self.svd = TruncatedSVD(n_components=200, n_iter=100, random_state=42)
+            self.svd.fit(X)
+        return self.svd.transform(X)
 
     def get_preprocess_data(self, data_loader, ids=False):
         tranformed_images = []
@@ -31,6 +37,7 @@ class HSCnnDataPreprocessor:
         labels = np.concatenate(labels, axis=0)
         labels = labels.ravel()
         ids_list = [item for sublist in ids_list for item in sublist]
+        flattened_tranformed_images = self.svd_transform(flattened_tranformed_images)
         if ids:
             return flattened_tranformed_images, labels, ids_list
         return flattened_tranformed_images, labels
@@ -38,7 +45,13 @@ class HSCnnDataPreprocessor:
 
 class SkDataPreprocessor:
     def __init__(self) -> None:
-        pass
+        self.svd = None
+
+    def svd_transform(self, X):
+        if self.svd is None:
+            self.svd = TruncatedSVD(n_components=200, n_iter=100, random_state=42)
+            self.svd.fit(X)
+        return self.svd.transform(X)
 
     def get_preprocess_data(self, data_loader, ids=False):
         tranformed_images = []
@@ -58,6 +71,7 @@ class SkDataPreprocessor:
         labels = np.concatenate(labels, axis=0)
         labels = labels.ravel()
         ids_list = [item for sublist in ids_list for item in sublist]
+        flattened_tranformed_images = self.svd_transform(flattened_tranformed_images)
         if ids:
             return flattened_tranformed_images, labels, ids_list
         return flattened_tranformed_images, labels
