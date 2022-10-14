@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 from wanda import config
-from sklearn.decomposition import TruncatedSVD
+from sklearn.decomposition import KernelPCA
 from wanda.model.cnn_hscore import WandaHSCNN
 
 
@@ -16,7 +16,13 @@ class HSCnnDataPreprocessor:
 
     def svd_transform(self, X):
         if self.svd is None:
-            self.svd = TruncatedSVD(n_components=200, n_iter=100, random_state=42)
+            self.svd = KernelPCA(
+                n_components=200,
+                kernel="rbf",
+                max_iter=100,
+                random_state=42,
+                n_jobs=config.N_JOBS,
+            )
             self.svd.fit(X)
         return self.svd.transform(X)
 
@@ -49,7 +55,9 @@ class SkDataPreprocessor:
 
     def svd_transform(self, X):
         if self.svd is None:
-            self.svd = TruncatedSVD(n_components=200, n_iter=100, random_state=42)
+            self.svd = KernelPCA(
+                n_components=200, max_iter=100, random_state=42, n_jobs=config.N_JOBS
+            )
             self.svd.fit(X)
         return self.svd.transform(X)
 

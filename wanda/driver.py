@@ -118,9 +118,9 @@ def optimize_hyperparameters_hscore_input():
     print("*" * 100)
     print("*" * 100)
     print("Summary: Models Performance with H-Score Input")
-    # print(
-    #     f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
-    # )
+    print(
+        f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
+    )
     print(
         f"SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
     )
