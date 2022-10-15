@@ -17,9 +17,9 @@ class HSCnnDataPreprocessor:
     def svd_transform(self, X):
         if self.svd is None:
             self.svd = KernelPCA(
-                n_components=200,
+                n_components=100,
                 kernel="rbf",
-                max_iter=100,
+                max_iter=25,
                 random_state=42,
                 n_jobs=config.N_JOBS,
             )
@@ -56,7 +56,11 @@ class SkDataPreprocessor:
     def svd_transform(self, X):
         if self.svd is None:
             self.svd = KernelPCA(
-                n_components=200, max_iter=100, random_state=42, n_jobs=config.N_JOBS
+                n_components=100,
+                kernel="rbf",
+                max_iter=25,
+                random_state=42,
+                n_jobs=config.N_JOBS,
             )
             self.svd.fit(X)
         return self.svd.transform(X)
