@@ -20,6 +20,17 @@ from wanda.trainer.optimizer import (
 
 
 def main():
+    train_h_score_cnn()
+    one_class_model_train()
+    visualize_activation_maps()
+
+    optimize_hyperparameters_hscore_input()
+    optimize_hyperparameters_plain_input()
+
+    evaluate_best_models()
+
+
+def train_h_score_cnn():
     if not file_exists(f"{config.BASE_PATH}/data/processed/train.csv"):
         data_reader = HSDataReader()
         data_reader.process_dataset()
@@ -30,12 +41,6 @@ def main():
     if not file_exists(f"{config.BASE_PATH}/models/WandaHSCNN.pt"):
         print("Train H-Score CNN First to train/predict SVM")
         return
-
-    one_class_model_train()
-    visualize_activation_maps()
-    optimize_hyperparameters_hscore_input()
-    optimize_hyperparameters_plain_input()
-    evaluate_best_models()
 
 
 def one_class_model_train():
