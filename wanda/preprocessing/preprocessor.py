@@ -1,7 +1,8 @@
 import torch
 import numpy as np
+from tqdm import tqdm
 from wanda import config
-from sklearn.decomposition import PCA
+from sklearn.decomposition import IncrementalPCA
 from wanda.model.cnn_hscore import WandaHSCNN
 
 
@@ -12,12 +13,14 @@ class HSCnnDataPreprocessor:
             torch.load(f"{config.BASE_PATH}/models/WandaHSCNN.pt")
         )
         self.cnn_hs.eval()
-        self.svd = None
+        self.batch_size = 1000
+        self.svd = IncrementalPCA(n_components=100, batch_size=self.batch_size)
 
     def svd_transform(self, X):
-        if self.svd is None:
-            self.svd = PCA(n_components=100, random_state=42)
-            self.svd.fit(X)
+        length = len(X)
+        total = (length // self.batch_size) + 1
+        for i in tqdm(range(0, length, self.batch_size), total=total):
+            self.svd.partial_fit(X[i : i + self.batch_size])
         return self.svd.transform(X)
 
     def get_preprocess_data(self, data_loader, ids=False):
@@ -45,12 +48,14 @@ class HSCnnDataPreprocessor:
 
 class SkDataPreprocessor:
     def __init__(self) -> None:
-        self.svd = None
+        self.batch_size = 1000
+        self.svd = IncrementalPCA(n_components=100, batch_size=self.batch_size)
 
     def svd_transform(self, X):
-        if self.svd is None:
-            self.svd = PCA(n_components=100, random_state=42)
-            self.svd.fit(X)
+        length = len(X)
+        total = (length // self.batch_size) + 1
+        for i in tqdm(range(0, length, self.batch_size), total=total):
+            self.svd.partial_fit(X[i : i + self.batch_size])
         return self.svd.transform(X)
 
     def get_preprocess_data(self, data_loader, ids=False):
