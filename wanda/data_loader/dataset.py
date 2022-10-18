@@ -27,12 +27,14 @@ class HSWifiTrainDataset(Dataset):
         label = row["label"]
         _id = row["id"]
 
-        if self.greyscale:
-            X_1 = Image.open(X_1_path).convert("L")
-            X_2 = Image.open(X_2_path).convert("L")
-        else:
-            X_1 = Image.open(X_1_path).convert("RGB")
-            X_2 = Image.open(X_2_path).convert("RGB")
+        X_1 = Image.open(X_1_path).convert("L")
+        X_2 = Image.open(X_2_path).convert("L")
+        # if self.greyscale:
+        #     X_1 = Image.open(X_1_path).convert("L")
+        #     X_2 = Image.open(X_2_path).convert("L")
+        # else:
+        #     X_1 = Image.open(X_1_path).convert("RGB")
+        #     X_2 = Image.open(X_2_path).convert("RGB")
         X_1 = self.transform(X_1)
         X_2 = self.transform(X_2)
         return {
