@@ -29,7 +29,8 @@ class Visualize:
                 fig, axes = plt.subplots(nrows=n_rows, ncols=3, figsize=(15, 15))
                 vmin = 0
                 vmax = activation_maps.max()
-                for i, ax in enumerate(axes.flat, start=0):
+                for i in range(act_map_len + 1):
+                    ax = axes.flat[i]
                     if i == 0:
                         ax.set_title(f"Input Image Label: {label}")
                         permuted_image = un_norm_image(torch.from_numpy(image["image"]))

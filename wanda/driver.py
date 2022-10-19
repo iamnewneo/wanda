@@ -27,7 +27,7 @@ def main():
     optimize_hyperparameters_hscore_input()
     optimize_hyperparameters_plain_input()
 
-    evaluate_best_models()
+    # evaluate_best_models()
 
 
 def train_h_score_cnn():

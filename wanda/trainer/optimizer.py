@@ -9,6 +9,8 @@ from sklearn import linear_model
 from wanda.model.od_algos import DeepSVDDModel, ECODModel
 from wanda import config
 
+optuna.logging.set_verbosity(optuna.logging.WARNING)
+
 
 def optimize_iso_forest_fn(trial, transformed_X, labels):
     n_estimators = trial.suggest_int("n_estimators", 50, 500)

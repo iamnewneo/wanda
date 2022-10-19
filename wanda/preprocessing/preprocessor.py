@@ -20,7 +20,7 @@ class HSCnnDataPreprocessor:
             n_neighbors=15,
             min_dist=0.15,
             metric="correlation",
-            verbose=True,
+            verbose=False,
             n_jobs=config.N_JOBS,
         )
 
@@ -62,7 +62,7 @@ class SkDataPreprocessor:
             n_neighbors=15,
             min_dist=0.15,
             metric="correlation",
-            verbose=True,
+            verbose=False,
             n_jobs=config.N_JOBS,
         )
 
