@@ -7,7 +7,7 @@ import pytorch_lightning as pl
 class WandaHSCNN(pl.LightningModule):
     def __init__(self):
         super(WandaHSCNN, self).__init__()
-        self.cnn1 = nn.Conv2d(in_channels=1, out_channels=8, kernel_size=10, stride=1)
+        self.cnn1 = nn.Conv2d(in_channels=3, out_channels=8, kernel_size=10, stride=1)
         self.relu1 = nn.ReLU()
 
         # Max pool 1
