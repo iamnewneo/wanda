@@ -5,6 +5,8 @@ from wanda import config
 from sklearn.decomposition import TruncatedSVD
 from umap import UMAP
 from wanda.model.cnn_hscore import WandaHSCNN
+from wanda.model.decompose import DecomposeData
+from wanda.utils.util import load_object
 
 
 class HSCnnDataPreprocessor:
@@ -15,22 +17,17 @@ class HSCnnDataPreprocessor:
         )
         self.cnn_hs.eval()
         self.batch_size = 1000
-        self.svd = UMAP(
-            n_components=100,
-            n_neighbors=15,
-            min_dist=0.15,
-            metric="correlation",
-            verbose=False,
-            n_jobs=config.N_JOBS,
-        )
         self.svd_tranformation = svd_tranformation
+        self.svd = None
+        if svd_tranformation:
+            self.svd = load_object(DecomposeData.model_path)
 
     def svd_transform(self, X):
         # length = len(X)
         # total = (length // self.batch_size) + 1
         # for i in tqdm(range(0, length, self.batch_size), total=total):
         #     self.svd.partial_fit(X[i : i + self.batch_size])
-        return self.svd.fit_transform(X)
+        return self.svd.transform(X)
 
     def get_preprocess_data(self, data_loader, ids=False):
         tranformed_images = []
@@ -61,22 +58,19 @@ class HSCnnDataPreprocessor:
 class SkDataPreprocessor:
     def __init__(self, svd_tranformation=True) -> None:
         self.batch_size = 1000
-        self.svd = UMAP(
-            n_components=100,
-            n_neighbors=15,
-            min_dist=0.15,
-            metric="correlation",
-            verbose=False,
-            n_jobs=config.N_JOBS,
-        )
         self.svd_tranformation = svd_tranformation
+        self.svd = None
+        if svd_tranformation:
+            self.svd = load_object(
+                DecomposeData.model_path.replace(".pkl", "_plain.pkl")
+            )
 
     def svd_transform(self, X):
         # length = len(X)
         # total = (length // self.batch_size) + 1
         # for i in tqdm(range(0, length, self.batch_size), total=total):
         #     self.svd.partial_fit(X[i : i + self.batch_size])
-        return self.svd.fit_transform(X)
+        return self.svd.transform(X)
 
     def get_preprocess_data(self, data_loader, ids=False):
         tranformed_images = []

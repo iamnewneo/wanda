@@ -18,6 +18,7 @@ from wanda.trainer.optimizer import (
 from wanda.model.od_algos import DeepSVDDModel, ECODModel
 from wanda.model.isolation_forest import IsoForestModel
 from wanda.model.svm import SVMModel
+from wanda.model.decompose import DecomposeData
 from wanda.utils.util import load_object, save_object
 from wanda.analyzer.analyze import detail_analyze_model
 
@@ -25,7 +26,9 @@ from wanda.analyzer.analyze import detail_analyze_model
 def main():
     # train_h_score_cnn()
     # one_class_model_train()
-    visualize_activation_maps()
+    # visualize_activation_maps()
+
+    train_data_decomposer()
 
     optimize_hyperparameters_hscore_input()
     optimize_hyperparameters_plain_input()
@@ -49,6 +52,31 @@ def train_h_score_cnn():
         return
 
 
+def train_data_decomposer():
+    test_loader = create_hs_data_loader(
+        batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=True, greyscale=False
+    )
+    hs_data_preprocessor = HSCnnDataPreprocessor(svd_tranformation=False)
+    transformed_X, labels = hs_data_preprocessor.get_preprocess_data(
+        data_loader=test_loader
+    )
+
+    clf = DecomposeData()
+    clf.fit(transformed_X)
+    save_object(clf, DecomposeData.model_path)
+
+    test_loader = create_hs_data_loader(
+        batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=True, greyscale=True
+    )
+    sk_data_preprocessor = SkDataPreprocessor(svd_tranformation=False)
+    transformed_X, labels = sk_data_preprocessor.get_preprocess_data(
+        data_loader=test_loader
+    )
+    clf = DecomposeData()
+    clf.fit(transformed_X)
+    save_object(clf, DecomposeData.model_path.replace(".pkl", "_plain.pkl"))
+
+
 def one_class_model_train():
     hs_train_loader = create_hs_data_loader(batch_size=config.BATCH_SIZE)
     hs_cnn_preprocessor = HSCnnDataPreprocessor()
@@ -67,6 +95,9 @@ def one_class_model_train():
 
 
 def evaluate_best_models_hscore_input():
+    print("*" * 100)
+    print("Evaluating Models Performance With H-Score Input")
+    print("*" * 100)
     test_loader = create_hs_data_loader(
         batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=True, greyscale=False
     )
@@ -93,6 +124,9 @@ def evaluate_best_models_hscore_input():
 
 
 def evaluate_best_models_plain():
+    print("*" * 100)
+    print("Evaluating Models Performance Without H-Score Input")
+    print("*" * 100)
     test_loader = create_hs_data_loader(
         batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=True, greyscale=True
     )

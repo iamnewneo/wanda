@@ -25,7 +25,7 @@ def load_object(path):
     with open(path, "rb") as inp:
         read_object = pickle.load(inp)
         print(f"Loaded: {read_object.__class__.__name__} from: {path}")
-        return read_object
+    return read_object
 
 
 def get_tranforms():
