@@ -24,7 +24,7 @@ from wanda.analyzer.analyze import detail_analyze_model
 def main():
     # train_h_score_cnn()
     # one_class_model_train()
-    # visualize_activation_maps()
+    visualize_activation_maps()
 
     optimize_hyperparameters_hscore_input()
     optimize_hyperparameters_plain_input()
@@ -115,7 +115,7 @@ def visualize_activation_maps():
     cnn_hs.load_state_dict(torch.load(f"{config.BASE_PATH}/models/WandaHSCNN.pt"))
     cnn_hs.eval()
 
-    visualizer = Visualize(hs_cnn=cnn_hs, train=False, n_samples=3)
+    visualizer = Visualize(hs_cnn=cnn_hs, train=False, n_samples=5)
     visualizer.random_visualize(labels=[1, 0])
 
 
