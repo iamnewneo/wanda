@@ -8,12 +8,14 @@ from wanda import config
 
 
 class SVMModel(BaseEstimator, TransformerMixin):
+    model_path = f"{config.BASE_PATH}/models/WandaSVM.pkl"
+
     def __init__(self, nu, power_t) -> None:
         self.nu = nu
         self.power_t = power_t
         self.model_name = "SVM"
         self.svm_clf = None
-        self.svm_model_path = f"{config.BASE_PATH}/models/WandaSVM.pkl"
+        self.model_path = self.model_path
 
     def fit(self, preprocessed_data, y=None):
         if torch.is_tensor(preprocessed_data):
@@ -53,8 +55,8 @@ class SVMModel(BaseEstimator, TransformerMixin):
 
     def save_model(self):
         if self.svm_clf is not None:
-            joblib.dump(self.svm_clf, self.svm_model_path)
-            print(f"SVM Model saved at: {self.svm_model_path}")
+            joblib.dump(self.svm_clf, self.model_path)
+            print(f"SVM Model saved at: {self.model_path}")
 
     def load_model(self):
-        self.svm_clf = joblib.load(self.svm_model_path)
+        self.svm_clf = joblib.load(self.model_path)

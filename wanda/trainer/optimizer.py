@@ -11,6 +11,11 @@ from wanda import config
 optuna.logging.set_verbosity(optuna.logging.WARNING)
 
 
+def callback(study, trial):
+    if study.best_trial.number == trial.number:
+        study.set_user_attr(key="best_model", value=trial.user_attrs["best_model"])
+
+
 def optimize_iso_forest_fn(trial, transformed_X, labels):
     n_estimators = trial.suggest_int("n_estimators", 50, 500)
     max_features = trial.suggest_uniform("max_features", 0.2, 0.95)
@@ -26,6 +31,7 @@ def optimize_iso_forest_fn(trial, transformed_X, labels):
         iso_forest_clf, transformed_X, labels, cv=5, scoring="roc_auc"
     )
     auc_score = scores.mean()
+    trial.set_user_attr(key="best_model", value=iso_forest_clf)
     return -1 * auc_score
 
 
@@ -36,6 +42,7 @@ def optimize_svm_fn(trial, transformed_X, labels):
     svm_clf = SVMModel(nu=nu, power_t=power_t)
     scores = cross_val_score(svm_clf, transformed_X, labels, cv=5, scoring="roc_auc")
     auc_score = scores.mean()
+    trial.set_user_attr(key="best_model", value=svm_clf)
     return -1 * auc_score
 
 
@@ -44,6 +51,7 @@ def optimize_deep_svdd_fn(trial, transformed_X, labels):
     svdd_clf = DeepSVDDModel(contamination=contamination)
     scores = cross_val_score(svdd_clf, transformed_X, labels, cv=5, scoring="roc_auc")
     auc_score = scores.mean()
+    trial.set_user_attr(key="best_model", value=svdd_clf)
     return -1 * auc_score
 
 
@@ -52,6 +60,7 @@ def optimize_ecod_fn(trial, transformed_X, labels):
     ecod_clf = ECODModel(contamination=contamination)
     scores = cross_val_score(ecod_clf, transformed_X, labels, cv=5, scoring="roc_auc")
     auc_score = scores.mean()
+    trial.set_user_attr(key="best_model", value=ecod_clf)
     return -1 * auc_score
 
 
@@ -61,6 +70,7 @@ def optimize_iso_forest(transformed_X, labels, n_trials):
         lambda trial: optimize_iso_forest_fn(trial, transformed_X, labels),
         n_trials=n_trials,
         n_jobs=config.N_JOBS,
+        callbacks=[callback],
     )
     return study
 
@@ -71,6 +81,7 @@ def optimize_svm(transformed_X, labels, n_trials):
         lambda trial: optimize_svm_fn(trial, transformed_X, labels),
         n_trials=n_trials,
         n_jobs=config.N_JOBS,
+        callbacks=[callback],
     )
     return study
 
@@ -81,6 +92,7 @@ def optimize_svdd(transformed_X, labels, n_trials):
         lambda trial: optimize_deep_svdd_fn(trial, transformed_X, labels),
         n_trials=n_trials,
         n_jobs=4,
+        callbacks=[callback],
     )
     return study
 
@@ -91,5 +103,6 @@ def optimize_ecod(transformed_X, labels, n_trials):
         lambda trial: optimize_ecod_fn(trial, transformed_X, labels),
         n_trials=n_trials,
         n_jobs=config.N_JOBS,
+        callbacks=[callback],
     )
     return study

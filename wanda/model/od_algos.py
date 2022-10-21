@@ -9,10 +9,12 @@ from pyod.models.deep_svdd import DeepSVDD
 
 
 class ECODModel(BaseEstimator, TransformerMixin):
+    model_path = f"{config.BASE_PATH}/models/ECOD.pkl"
+
     def __init__(self, contamination) -> None:
         self.model_name = "ECOD"
         self.ecod_clf = None
-        self.ecod_model_path = f"{config.BASE_PATH}/models/ECOD.pkl"
+        self.model_path = self.model_path
         self.contamination = contamination
 
     def fit(self, preprocessed_data, y=None):
@@ -51,18 +53,20 @@ class ECODModel(BaseEstimator, TransformerMixin):
 
     def save_model(self):
         if self.ecod_clf is not None:
-            joblib.dump(self.ecod_clf, self.ecod_model_path)
-            print(f"{self.model_name} Model saved at: {self.ecod_model_path}")
+            joblib.dump(self.ecod_clf, self.model_path)
+            print(f"{self.model_name} Model saved at: {self.model_path}")
 
     def load_model(self):
-        self.ecod_clf = joblib.load(self.ecod_model_path)
+        self.ecod_clf = joblib.load(self.model_path)
 
 
 class DeepSVDDModel(BaseEstimator, TransformerMixin):
+    model_path = f"{config.BASE_PATH}/models/DeepSVDD.pkl"
+
     def __init__(self, contamination) -> None:
         self.model_name = "Deep SVDD"
         self.deep_svd_clf = None
-        self.deep_svd_model_path = f"{config.BASE_PATH}/models/DeepSVDD.pkl"
+        self.model_path = self.model_path
         self.contamination = contamination
 
     def fit(self, preprocessed_data, y=None):
@@ -107,8 +111,8 @@ class DeepSVDDModel(BaseEstimator, TransformerMixin):
 
     def save_model(self):
         if self.deep_svd_clf is not None:
-            joblib.dump(self.deep_svd_clf, self.deep_svd_model_path)
-            print(f"{self.model_name} Model saved at: {self.deep_svd_model_path}")
+            joblib.dump(self.deep_svd_clf, self.model_path)
+            print(f"{self.model_name} Model saved at: {self.model_path}")
 
     def load_model(self):
-        self.deep_svd_clf = joblib.load(self.deep_svd_model_path)
+        self.deep_svd_clf = joblib.load(self.model_path)

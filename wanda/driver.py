@@ -7,8 +7,6 @@ from wanda.trainer.trainer import hs_model_trainer, sk_model_trainer
 from wanda.infer.predict import Evaluator
 from wanda.visualizer.visualize import Visualize
 from wanda.model.cnn_hscore import WandaHSCNN
-from wanda.model.svm import SVMModel
-from wanda.model.isolation_forest import IsoForestModel
 from wanda.model.lof import LOFModel
 from wanda.preprocessing.preprocessor import HSCnnDataPreprocessor, SkDataPreprocessor
 from wanda.trainer.optimizer import (
@@ -17,6 +15,11 @@ from wanda.trainer.optimizer import (
     optimize_svdd,
     optimize_ecod,
 )
+from wanda.model.od_algos import DeepSVDDModel, ECODModel
+from wanda.model.isolation_forest import IsoForestModel
+from wanda.model.svm import SVMModel
+
+from wanda.utils.util import save_object
 
 
 def main():
@@ -101,14 +104,20 @@ def optimize_hyperparameters_hscore_input():
     best_study_iso = optimize_iso_forest(
         transformed_X, labels, n_trials=config.N_OPT_TRIALS
     )
+    best_model = best_study_iso.user_attrs["best_model"]
+    save_object(best_model, IsoForestModel.model_path)
     print(
         f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
     )
     best_study_svm = optimize_svm(transformed_X, labels, n_trials=config.N_OPT_TRIALS)
+    best_model = best_study_svm.user_attrs["best_model"]
+    save_object(best_model, SVMModel.model_path)
     print(
         f"SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
     )
     best_study_ecod = optimize_ecod(transformed_X, labels, n_trials=config.N_OPT_TRIALS)
+    best_model = best_study_ecod.user_attrs["best_model"]
+    save_object(best_model, ECODModel.model_path)
     print(
         f"ECOD Best Params: {best_study_ecod.best_params}. Best Value: {-1*best_study_ecod.best_value}"
     )
@@ -116,6 +125,8 @@ def optimize_hyperparameters_hscore_input():
     if config.ENV == "dev":
         n_trials = 1
     best_study_svdd = optimize_svdd(transformed_X, labels, n_trials=n_trials)
+    best_model = best_study_svdd.user_attrs["best_model"]
+    save_object(best_model, DeepSVDDModel.model_path)
     print(
         f"Deep SVDD Best Params: {best_study_svdd.best_params}. Best Value: {-1*best_study_svdd.best_value}"
     )
@@ -153,14 +164,22 @@ def optimize_hyperparameters_plain_input():
     best_study_iso = optimize_iso_forest(
         transformed_X, labels, n_trials=config.N_OPT_TRIALS
     )
+    best_model = best_study_iso.user_attrs["best_model"]
+    save_object(
+        best_model, IsoForestModel.model_path.replace(".pkl", "_plain.pkl"),
+    )
     print(
         f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
     )
     best_study_svm = optimize_svm(transformed_X, labels, n_trials=config.N_OPT_TRIALS)
+    best_model = best_study_svm.user_attrs["best_model"]
+    save_object(best_model, SVMModel.model_path.replace(".pkl", "_plain.pkl"))
     print(
         f"SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
     )
     best_study_ecod = optimize_ecod(transformed_X, labels, n_trials=config.N_OPT_TRIALS)
+    best_model = best_study_ecod.user_attrs["best_model"]
+    save_object(best_model, ECODModel.model_path.replace(".pkl", "_plain.pkl"))
     print(
         f"ECOD Best Params: {best_study_ecod.best_params}. Best Value: {-1*best_study_ecod.best_value}"
     )
@@ -168,6 +187,8 @@ def optimize_hyperparameters_plain_input():
     if config.ENV == "dev":
         n_trials = 1
     best_study_svdd = optimize_svdd(transformed_X, labels, n_trials=n_trials)
+    best_model = best_study_svdd.user_attrs["best_model"]
+    save_object(best_model, DeepSVDDModel.model_path.replace(".pkl", "_plain.pkl"))
     print(
         f"Deep SVDD Best Params: {best_study_svdd.best_params}. Best Value: {-1*best_study_svdd.best_value}"
     )

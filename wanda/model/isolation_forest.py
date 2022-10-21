@@ -8,6 +8,8 @@ from wanda import config
 
 
 class IsoForestModel(BaseEstimator, TransformerMixin):
+    model_path = f"{config.BASE_PATH}/models/IsoForest.pkl"
+
     def __init__(
         self, random_state, n_estimators, max_features, contamination, n_jobs
     ) -> None:
@@ -18,7 +20,7 @@ class IsoForestModel(BaseEstimator, TransformerMixin):
         self.n_jobs = n_jobs
         self.model_name = "Isolation Forest"
         self.iso_forest_clf = None
-        self.iso_forest_model_path = f"{config.BASE_PATH}/models/IsoForest.pkl"
+        self.model_path = self.model_path
 
     def fit(self, preprocessed_data, y=None):
         if torch.is_tensor(preprocessed_data):
@@ -60,8 +62,8 @@ class IsoForestModel(BaseEstimator, TransformerMixin):
 
     def save_model(self):
         if self.iso_forest_clf is not None:
-            joblib.dump(self.iso_forest_clf, self.iso_forest_model_path)
-            print(f"Isolation Forest Model saved at: {self.iso_forest_model_path}")
+            joblib.dump(self.iso_forest_clf, self.model_path)
+            print(f"Isolation Forest Model saved at: {self.model_path}")
 
     def load_model(self):
-        self.iso_forest_clf = joblib.load(self.iso_forest_model_path)
+        self.iso_forest_clf = joblib.load(self.model_path)
