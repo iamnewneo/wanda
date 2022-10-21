@@ -28,7 +28,7 @@ def main():
     # one_class_model_train()
     # visualize_activation_maps()
 
-    train_data_decomposer()
+    # train_data_decomposer()
 
     optimize_hyperparameters_hscore_input()
     optimize_hyperparameters_plain_input()
@@ -77,21 +77,21 @@ def train_data_decomposer():
     save_object(clf, DecomposeData.model_path.replace(".pkl", "_plain.pkl"))
 
 
-def one_class_model_train():
-    hs_train_loader = create_hs_data_loader(batch_size=config.BATCH_SIZE)
-    hs_cnn_preprocessor = HSCnnDataPreprocessor()
-    preprocessed_data, _ = hs_cnn_preprocessor.get_preprocess_data(hs_train_loader)
+# def one_class_model_train():
+#     hs_train_loader = create_hs_data_loader(batch_size=config.BATCH_SIZE)
+#     hs_cnn_preprocessor = HSCnnDataPreprocessor()
+#     preprocessed_data, _ = hs_cnn_preprocessor.get_preprocess_data(hs_train_loader)
 
-    svm_model = SVMModel()
-    svm_model = sk_model_trainer(model=svm_model, preprocessed_data=preprocessed_data)
+#     svm_model = SVMModel()
+#     svm_model = sk_model_trainer(model=svm_model, preprocessed_data=preprocessed_data)
 
-    iso_forest_model = IsoForestModel()
-    iso_forest_model = sk_model_trainer(
-        model=iso_forest_model, preprocessed_data=preprocessed_data
-    )
+#     iso_forest_model = IsoForestModel()
+#     iso_forest_model = sk_model_trainer(
+#         model=iso_forest_model, preprocessed_data=preprocessed_data
+#     )
 
-    # lof_model = LOFModel()
-    # lof_model = sk_model_trainer(model=lof_model, preprocessed_data=preprocessed_data)
+#     # lof_model = LOFModel()
+#     # lof_model = sk_model_trainer(model=lof_model, preprocessed_data=preprocessed_data)
 
 
 def evaluate_best_models_hscore_input():
@@ -101,7 +101,7 @@ def evaluate_best_models_hscore_input():
     test_loader = create_hs_data_loader(
         batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=True, greyscale=False
     )
-    hs_data_preprocessor = HSCnnDataPreprocessor()
+    hs_data_preprocessor = HSCnnDataPreprocessor(svd_tranformation=False)
     transformed_X, labels, ids = hs_data_preprocessor.get_preprocess_data(
         data_loader=test_loader, ids=True
     )
@@ -130,7 +130,7 @@ def evaluate_best_models_plain():
     test_loader = create_hs_data_loader(
         batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=True, greyscale=True
     )
-    sk_data_preprocessor = SkDataPreprocessor()
+    sk_data_preprocessor = SkDataPreprocessor(svd_tranformation=False)
     transformed_X, labels, ids = sk_data_preprocessor.get_preprocess_data(
         data_loader=test_loader, ids=True
     )
@@ -165,7 +165,7 @@ def optimize_hyperparameters_hscore_input():
     hs_test_loader = create_hs_data_loader(
         batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=True
     )
-    hs_cnn_preprocessor = HSCnnDataPreprocessor()
+    hs_cnn_preprocessor = HSCnnDataPreprocessor(svd_tranformation=False)
     transformed_X, labels = hs_cnn_preprocessor.get_preprocess_data(hs_test_loader)
     if torch.is_tensor(transformed_X):
         transformed_X = transformed_X.detach().numpy()
@@ -229,7 +229,7 @@ def optimize_hyperparameters_plain_input():
     test_loader = create_hs_data_loader(
         batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=True, greyscale=True
     )
-    sk_data_preprocessor = SkDataPreprocessor()
+    sk_data_preprocessor = SkDataPreprocessor(svd_tranformation=False)
     transformed_X, labels = sk_data_preprocessor.get_preprocess_data(
         data_loader=test_loader
     )
