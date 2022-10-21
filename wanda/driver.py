@@ -29,7 +29,7 @@ def main():
     optimize_hyperparameters_hscore_input()
     optimize_hyperparameters_plain_input()
 
-    evaluate_best_models()
+    evaluate_best_models_hscore_input()
     evaluate_best_models_plain()
 
 
