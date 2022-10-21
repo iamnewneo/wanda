@@ -19,18 +19,20 @@ from wanda.model.od_algos import DeepSVDDModel, ECODModel
 from wanda.model.isolation_forest import IsoForestModel
 from wanda.model.svm import SVMModel
 from wanda.utils.util import load_object, save_object
-
+from wanda.analyzer.analyze import detail_analyze_model
 
 def main():
-    train_h_score_cnn()
-    one_class_model_train()
-    visualize_activation_maps()
+    # train_h_score_cnn()
+    # one_class_model_train()
+    # visualize_activation_maps()
 
     optimize_hyperparameters_hscore_input()
     optimize_hyperparameters_plain_input()
 
     evaluate_best_models_hscore_input()
     evaluate_best_models_plain()
+
+    detail_analyze_model()
 
 
 def train_h_score_cnn():

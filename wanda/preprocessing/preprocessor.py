@@ -8,7 +8,7 @@ from wanda.model.cnn_hscore import WandaHSCNN
 
 
 class HSCnnDataPreprocessor:
-    def __init__(self) -> None:
+    def __init__(self, svd_tranformation=True) -> None:
         self.cnn_hs = WandaHSCNN()
         self.cnn_hs.load_state_dict(
             torch.load(f"{config.BASE_PATH}/models/WandaHSCNN.pt")
@@ -23,6 +23,7 @@ class HSCnnDataPreprocessor:
             verbose=False,
             n_jobs=config.N_JOBS,
         )
+        self.svd_tranformation = svd_tranformation
 
     def svd_transform(self, X):
         # length = len(X)
@@ -48,14 +49,17 @@ class HSCnnDataPreprocessor:
         labels = np.concatenate(labels, axis=0)
         labels = labels.ravel()
         ids_list = [item for sublist in ids_list for item in sublist]
-        flattened_tranformed_images = self.svd_transform(flattened_tranformed_images)
+        if self.svd_tranformation:
+            flattened_tranformed_images = self.svd_transform(
+                flattened_tranformed_images
+            )
         if ids:
             return flattened_tranformed_images, labels, ids_list
         return flattened_tranformed_images, labels
 
 
 class SkDataPreprocessor:
-    def __init__(self) -> None:
+    def __init__(self, svd_tranformation=True) -> None:
         self.batch_size = 1000
         self.svd = UMAP(
             n_components=100,
@@ -65,6 +69,7 @@ class SkDataPreprocessor:
             verbose=False,
             n_jobs=config.N_JOBS,
         )
+        self.svd_tranformation = svd_tranformation
 
     def svd_transform(self, X):
         # length = len(X)
@@ -91,7 +96,10 @@ class SkDataPreprocessor:
         labels = np.concatenate(labels, axis=0)
         labels = labels.ravel()
         ids_list = [item for sublist in ids_list for item in sublist]
-        flattened_tranformed_images = self.svd_transform(flattened_tranformed_images)
+        if self.svd_tranformation:
+            flattened_tranformed_images = self.svd_transform(
+                flattened_tranformed_images
+            )
         if ids:
             return flattened_tranformed_images, labels, ids_list
         return flattened_tranformed_images, labels

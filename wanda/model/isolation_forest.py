@@ -47,6 +47,9 @@ class IsoForestModel(BaseEstimator, TransformerMixin):
         y_preds = np.array(y_preds).flatten()
         return y_preds
 
+    def decision_function(self, X):
+        return self.iso_forest_clf.decision_function(X)
+
     def predict_proba(self, X):
         y = self.predict(X)
         # y_2_cols = np.zeros((y.shape[0], 2))
@@ -54,9 +57,6 @@ class IsoForestModel(BaseEstimator, TransformerMixin):
         # y_2_cols[:, 0] = 1 - y_2_cols[:, 1]
         # return y_2_cols
         return y
-
-    def decision_function(self, X):
-        return self.predict_proba(X)
 
     def save_model(self):
         if self.iso_forest_clf is not None:

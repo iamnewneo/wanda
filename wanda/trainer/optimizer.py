@@ -34,7 +34,7 @@ def optimize_iso_forest_fn(trial, transformed_X, labels):
             n_jobs=config.N_JOBS,
         )
         iso_forest_clf.fit(transformed_X[train_indices], labels[train_indices])
-        y_pred = iso_forest_clf.predict(transformed_X[test_indices])
+        y_pred = iso_forest_clf.decision_function(transformed_X[test_indices])
         scores.append(roc_auc_score(labels[test_indices], y_pred))
     auc_score = sum(scores) / len(scores)
     trial_model_dict["ISOF"][trial.number] = iso_forest_clf
@@ -49,7 +49,7 @@ def optimize_svm_fn(trial, transformed_X, labels):
     for train_indices, test_indices in k_fold.split(transformed_X, labels):
         svm_clf = SVMModel(nu=nu, power_t=power_t)
         svm_clf.fit(transformed_X[train_indices], labels[train_indices])
-        y_pred = svm_clf.predict(transformed_X[test_indices])
+        y_pred = svm_clf.decision_function(transformed_X[test_indices])
         scores.append(roc_auc_score(labels[test_indices], y_pred))
     auc_score = sum(scores) / len(scores)
     trial_model_dict["SVM"][trial.number] = svm_clf
@@ -63,7 +63,7 @@ def optimize_deep_svdd_fn(trial, transformed_X, labels):
     for train_indices, test_indices in k_fold.split(transformed_X, labels):
         svdd_clf = DeepSVDDModel(contamination=contamination)
         svdd_clf.fit(transformed_X[train_indices], labels[train_indices])
-        y_pred = svdd_clf.predict(transformed_X[test_indices])
+        y_pred = svdd_clf.decision_function(transformed_X[test_indices])
         scores.append(roc_auc_score(labels[test_indices], y_pred))
     auc_score = sum(scores) / len(scores)
     trial_model_dict["SVDD"][trial.number] = svdd_clf
@@ -77,7 +77,7 @@ def optimize_ecod_fn(trial, transformed_X, labels):
     for train_indices, test_indices in k_fold.split(transformed_X, labels):
         ecod_clf = ECODModel(contamination=contamination)
         ecod_clf.fit(transformed_X[train_indices], labels[train_indices])
-        y_pred = ecod_clf.predict(transformed_X[test_indices])
+        y_pred = ecod_clf.decision_function(transformed_X[test_indices])
         scores.append(roc_auc_score(labels[test_indices], y_pred))
     auc_score = sum(scores) / len(scores)
     trial_model_dict["ECOD"][trial.number] = ecod_clf

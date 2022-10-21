@@ -44,12 +44,12 @@ class SVMModel(BaseEstimator, TransformerMixin):
         y_preds = np.array(y_preds).flatten()
         return y_preds
 
+    def decision_function(self, X):
+        return self.svm_clf.decision_function(X)
+
     def predict_proba(self, X):
         y = self.predict(X)
         return y
-
-    def decision_function(self, X):
-        return self.predict_proba(X)
 
     def save_model(self):
         if self.svm_clf is not None:

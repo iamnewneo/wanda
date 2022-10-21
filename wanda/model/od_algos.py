@@ -47,7 +47,7 @@ class ECODModel(BaseEstimator, TransformerMixin):
         return y
 
     def decision_function(self, X):
-        return self.predict_proba(X)
+        return self.ecod_clf.decision_function(X)
 
     def save_model(self):
         if self.ecod_clf is not None:
@@ -103,7 +103,7 @@ class DeepSVDDModel(BaseEstimator, TransformerMixin):
         return y
 
     def decision_function(self, X):
-        return self.predict_proba(X)
+        return self.deep_svd_clf.decision_function(X)
 
     def save_model(self):
         if self.deep_svd_clf is not None:
