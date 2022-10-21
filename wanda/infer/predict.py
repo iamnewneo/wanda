@@ -1,11 +1,12 @@
 import os
 import pandas as pd
 from os.path import exists as file_exists
-from sklearn.metrics import accuracy_score, roc_auc_score
+from sklearn.metrics import roc_auc_score
 from wanda import config
 from wanda.preprocessing.preprocessor import HSCnnDataPreprocessor, SkDataPreprocessor
 from wanda.preprocessing.data_reader import HSDataReader
 from wanda.data_loader.data_loader import create_hs_data_loader
+from wanda.utils.util import switch_labels
 
 
 class Evaluator:
@@ -52,7 +53,7 @@ class Evaluator:
         #     else:
         #         tranformed_preds.append(0)
         # labels[-1] = 0
-        auc_score = roc_auc_score(labels, preds)
+        auc_score = roc_auc_score(switch_labels(labels), preds)
         # accuracy = accuracy_score(labels, tranformed_preds)
 
         print(f"{self.model.model_name} Model Performance:")

@@ -4,6 +4,7 @@ from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedKFold, cross_val_score
 from wanda.model.od_algos import DeepSVDDModel, ECODModel
 from wanda.model.isolation_forest import IsoForestModel
+from wanda.utils.util import switch_labels
 from wanda.model.svm import SVMModel
 from wanda import config
 
@@ -35,7 +36,7 @@ def optimize_iso_forest_fn(trial, transformed_X, labels):
         )
         iso_forest_clf.fit(transformed_X[train_indices], labels[train_indices])
         y_pred = iso_forest_clf.decision_function(transformed_X[test_indices])
-        scores.append(roc_auc_score(labels[test_indices], y_pred))
+        scores.append(roc_auc_score(switch_labels(labels[test_indices]), y_pred))
     auc_score = sum(scores) / len(scores)
     trial_model_dict["ISOF"][trial.number] = iso_forest_clf
     return -1 * auc_score
@@ -50,7 +51,7 @@ def optimize_svm_fn(trial, transformed_X, labels):
         svm_clf = SVMModel(nu=nu, power_t=power_t)
         svm_clf.fit(transformed_X[train_indices], labels[train_indices])
         y_pred = svm_clf.decision_function(transformed_X[test_indices])
-        scores.append(roc_auc_score(labels[test_indices], y_pred))
+        scores.append(roc_auc_score(switch_labels(labels[test_indices]), y_pred))
     auc_score = sum(scores) / len(scores)
     trial_model_dict["SVM"][trial.number] = svm_clf
     return -1 * auc_score
@@ -64,7 +65,7 @@ def optimize_deep_svdd_fn(trial, transformed_X, labels):
         svdd_clf = DeepSVDDModel(contamination=contamination)
         svdd_clf.fit(transformed_X[train_indices], labels[train_indices])
         y_pred = svdd_clf.decision_function(transformed_X[test_indices])
-        scores.append(roc_auc_score(labels[test_indices], y_pred))
+        scores.append(roc_auc_score(switch_labels(labels[test_indices]), y_pred))
     auc_score = sum(scores) / len(scores)
     trial_model_dict["SVDD"][trial.number] = svdd_clf
     return -1 * auc_score
@@ -78,7 +79,7 @@ def optimize_ecod_fn(trial, transformed_X, labels):
         ecod_clf = ECODModel(contamination=contamination)
         ecod_clf.fit(transformed_X[train_indices], labels[train_indices])
         y_pred = ecod_clf.decision_function(transformed_X[test_indices])
-        scores.append(roc_auc_score(labels[test_indices], y_pred))
+        scores.append(roc_auc_score(switch_labels(labels[test_indices]), y_pred))
     auc_score = sum(scores) / len(scores)
     trial_model_dict["ECOD"][trial.number] = ecod_clf
     scores = cross_val_score(ecod_clf, transformed_X, labels, cv=5, scoring="roc_auc")

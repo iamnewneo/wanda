@@ -21,6 +21,7 @@ from wanda.model.svm import SVMModel
 from wanda.utils.util import load_object, save_object
 from wanda.analyzer.analyze import detail_analyze_model
 
+
 def main():
     # train_h_score_cnn()
     # one_class_model_train()
@@ -66,22 +67,29 @@ def one_class_model_train():
 
 
 def evaluate_best_models_hscore_input():
+    test_loader = create_hs_data_loader(
+        batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=True, greyscale=True
+    )
+    hs_data_preprocessor = HSCnnDataPreprocessor()
+    transformed_X, labels, ids = hs_data_preprocessor.get_preprocess_data(
+        data_loader=test_loader, ids=True
+    )
     clf = load_object(SVMModel.model_path)
     model_evaluator = Evaluator(model=clf)
-    model_evaluator.evaulate()
+    model_evaluator.evaulate(transformed_X, labels, ids)
 
     clf = load_object(IsoForestModel.model_path)
     model_evaluator = Evaluator(model=clf)
-    model_evaluator.evaulate()
+    model_evaluator.evaulate(transformed_X, labels, ids)
 
     clf = load_object(ECODModel.model_path)
     model_evaluator = Evaluator(model=clf)
-    model_evaluator.evaulate()
+    model_evaluator.evaulate(transformed_X, labels, ids)
 
     # clf = DeepSVDDModel(contamination=0.36)
     # clf.fit(transformed_X)
     # model_evaluator = Evaluator(model=clf)
-    # model_evaluator.evaulate(transformed_X, labels, ids, save_postfix="plain")
+    # model_evaluator.evaulate(transformed_X, labels, ids)
 
 
 def evaluate_best_models_plain():
