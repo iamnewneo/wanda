@@ -18,8 +18,7 @@ from wanda.trainer.optimizer import (
 from wanda.model.od_algos import DeepSVDDModel, ECODModel
 from wanda.model.isolation_forest import IsoForestModel
 from wanda.model.svm import SVMModel
-
-from wanda.utils.util import save_object
+from wanda.utils.util import load_object, save_object
 
 
 def main():
@@ -30,7 +29,8 @@ def main():
     optimize_hyperparameters_hscore_input()
     optimize_hyperparameters_plain_input()
 
-    # evaluate_best_models()
+    evaluate_best_models()
+    evaluate_best_models_plain()
 
 
 def train_h_score_cnn():
@@ -63,18 +63,49 @@ def one_class_model_train():
     # lof_model = sk_model_trainer(model=lof_model, preprocessed_data=preprocessed_data)
 
 
-def evaluate_best_models():
-    svm_model = SVMModel()
-    model_evaluator = Evaluator(model=svm_model)
+def evaluate_best_models_hscore_input():
+    clf = load_object(SVMModel.model_path)
+    model_evaluator = Evaluator(model=clf)
     model_evaluator.evaulate()
 
-    iso_f_model = IsoForestModel()
-    model_evaluator = Evaluator(model=iso_f_model)
+    clf = load_object(IsoForestModel.model_path)
+    model_evaluator = Evaluator(model=clf)
     model_evaluator.evaulate()
 
-    # lof_model = LOFModel()
-    # model_evaluator = Evaluator(model=lof_model)
-    # model_evaluator.evaulate()
+    clf = load_object(ECODModel.model_path)
+    model_evaluator = Evaluator(model=clf)
+    model_evaluator.evaulate()
+
+    # clf = DeepSVDDModel(contamination=0.36)
+    # clf.fit(transformed_X)
+    # model_evaluator = Evaluator(model=clf)
+    # model_evaluator.evaulate(transformed_X, labels, ids, save_postfix="plain")
+
+
+def evaluate_best_models_plain():
+    test_loader = create_hs_data_loader(
+        batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=True, greyscale=True
+    )
+    sk_data_preprocessor = SkDataPreprocessor()
+    transformed_X, labels, ids = sk_data_preprocessor.get_preprocess_data(
+        data_loader=test_loader, ids=True
+    )
+    clf = load_object(SVMModel.model_path.replace(".pkl", "_plain.pkl"))
+    model_evaluator = Evaluator(model=clf)
+    model_evaluator.evaulate(transformed_X, labels, ids, save_postfix="plain")
+
+    clf = load_object(IsoForestModel.model_path.replace(".pkl", "_plain.pkl"))
+    model_evaluator = Evaluator(model=clf)
+    model_evaluator.evaulate(transformed_X, labels, ids, save_postfix="plain")
+
+    clf = load_object(ECODModel.model_path.replace(".pkl", "_plain.pkl"))
+    model_evaluator = Evaluator(model=clf)
+    model_evaluator.evaulate(transformed_X, labels, ids, save_postfix="plain")
+
+    # clf = DeepSVDDModel(contamination=0.36)
+    # clf.fit(transformed_X)
+    # model_evaluator = Evaluator(model=clf)
+    # model_evaluator.evaulate(transformed_X, labels, ids, save_postfix="plain")
 
 
 def visualize_activation_maps():
@@ -104,19 +135,19 @@ def optimize_hyperparameters_hscore_input():
     best_study_iso = optimize_iso_forest(
         transformed_X, labels, n_trials=config.N_OPT_TRIALS
     )
-    best_model = best_study_iso.user_attrs["best_model"]
+    best_model = best_study_iso.__getattribute__("_best_model")
     save_object(best_model, IsoForestModel.model_path)
     print(
         f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
     )
     best_study_svm = optimize_svm(transformed_X, labels, n_trials=config.N_OPT_TRIALS)
-    best_model = best_study_svm.user_attrs["best_model"]
+    best_model = best_study_svm.__getattribute__("_best_model")
     save_object(best_model, SVMModel.model_path)
     print(
         f"SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
     )
     best_study_ecod = optimize_ecod(transformed_X, labels, n_trials=config.N_OPT_TRIALS)
-    best_model = best_study_ecod.user_attrs["best_model"]
+    best_model = best_study_ecod.__getattribute__("_best_model")
     save_object(best_model, ECODModel.model_path)
     print(
         f"ECOD Best Params: {best_study_ecod.best_params}. Best Value: {-1*best_study_ecod.best_value}"
@@ -125,7 +156,7 @@ def optimize_hyperparameters_hscore_input():
     if config.ENV == "dev":
         n_trials = 1
     best_study_svdd = optimize_svdd(transformed_X, labels, n_trials=n_trials)
-    best_model = best_study_svdd.user_attrs["best_model"]
+    best_model = best_study_svdd.__getattribute__("_best_model")
     save_object(best_model, DeepSVDDModel.model_path)
     print(
         f"Deep SVDD Best Params: {best_study_svdd.best_params}. Best Value: {-1*best_study_svdd.best_value}"
@@ -164,7 +195,7 @@ def optimize_hyperparameters_plain_input():
     best_study_iso = optimize_iso_forest(
         transformed_X, labels, n_trials=config.N_OPT_TRIALS
     )
-    best_model = best_study_iso.user_attrs["best_model"]
+    best_model = best_study_iso.__getattribute__("_best_model")
     save_object(
         best_model, IsoForestModel.model_path.replace(".pkl", "_plain.pkl"),
     )
@@ -172,13 +203,13 @@ def optimize_hyperparameters_plain_input():
         f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
     )
     best_study_svm = optimize_svm(transformed_X, labels, n_trials=config.N_OPT_TRIALS)
-    best_model = best_study_svm.user_attrs["best_model"]
+    best_model = best_study_svm.__getattribute__("_best_model")
     save_object(best_model, SVMModel.model_path.replace(".pkl", "_plain.pkl"))
     print(
         f"SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
     )
     best_study_ecod = optimize_ecod(transformed_X, labels, n_trials=config.N_OPT_TRIALS)
-    best_model = best_study_ecod.user_attrs["best_model"]
+    best_model = best_study_ecod.__getattribute__("_best_model")
     save_object(best_model, ECODModel.model_path.replace(".pkl", "_plain.pkl"))
     print(
         f"ECOD Best Params: {best_study_ecod.best_params}. Best Value: {-1*best_study_ecod.best_value}"
@@ -187,8 +218,8 @@ def optimize_hyperparameters_plain_input():
     if config.ENV == "dev":
         n_trials = 1
     best_study_svdd = optimize_svdd(transformed_X, labels, n_trials=n_trials)
-    best_model = best_study_svdd.user_attrs["best_model"]
-    save_object(best_model, DeepSVDDModel.model_path.replace(".pkl", "_plain.pkl"))
+    best_model = best_study_svdd.__getattribute__("_best_model")
+    # save_object(best_model, DeepSVDDModel.model_path.replace(".pkl", "_plain.pkl"))
     print(
         f"Deep SVDD Best Params: {best_study_svdd.best_params}. Best Value: {-1*best_study_svdd.best_value}"
     )

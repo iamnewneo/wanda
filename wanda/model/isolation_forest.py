@@ -35,8 +35,6 @@ class IsoForestModel(BaseEstimator, TransformerMixin):
     def predict(self, X):
         if torch.is_tensor(X):
             X = X.detach().numpy()
-        if self.iso_forest_clf is None:
-            self.load_model()
         y_preds = []
         n = X.shape[0]
         chunk_size = 1000

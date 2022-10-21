@@ -9,46 +9,20 @@ from wanda.data_loader.data_loader import create_hs_data_loader
 
 
 class Evaluator:
-    def __init__(self, model, hs_preprocess=True) -> None:
+    def __init__(self, model) -> None:
         self.model = model
-        self.model.load_model()
-        self.hs_preprocess = hs_preprocess
-        self.hs_cnn_preprocessor = HSCnnDataPreprocessor()
-        self.sk_preprocessor = SkDataPreprocessor()
 
     def preprocess_data(self):
         data_reader = HSDataReader(train=False)
         data_reader.process_dataset()
 
-    def get_dataset(self):
-        transformed_X, labels, ids = None, None, None
-        if self.hs_cnn_preprocessor:
-            test_loader = create_hs_data_loader(
-                batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=False
-            )
-            transformed_X, labels, ids = self.hs_cnn_preprocessor.get_preprocess_data(
-                test_loader, ids=True
-            )
-        else:
-            test_loader = create_hs_data_loader(
-                batch_size=config.TEST_BATCH_SIZE,
-                train=False,
-                shuffle=False,
-                greyscale=True,
-            )
-            transformed_X, labels = self.sk_preprocessor.get_preprocess_data(
-                test_loader, ids=True
-            )
-        return transformed_X, labels, ids
-
-    def evaulate(self):
+    def evaulate(self, transformed_X, labels, ids, save_postfix=""):
         df_preds = pd.DataFrame()
         print("*********************************************")
         print(f"Started {self.model.model_name} Evaulation")
         if not file_exists(f"{config.BASE_PATH}/data/processed/test.csv"):
             self.preprocess_data()
 
-        transformed_X, labels, ids = self.get_dataset()
         df_preds["id"] = ids
         df_preds["label"] = labels
 
@@ -59,6 +33,7 @@ class Evaluator:
             f"{preds_folder}/"
             + "_".join(self.model.model_name.split(" "))
             + "_"
+            + save_postfix
             + "preds.csv"
         )
         if not file_exists(preds_folder):

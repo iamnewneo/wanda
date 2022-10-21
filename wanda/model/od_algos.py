@@ -30,8 +30,6 @@ class ECODModel(BaseEstimator, TransformerMixin):
     def predict(self, X):
         if torch.is_tensor(X):
             X = X.detach().numpy()
-        if self.ecod_clf is None:
-            self.load_model()
         y_preds = []
         n = X.shape[0]
         chunk_size = 1000
@@ -88,8 +86,6 @@ class DeepSVDDModel(BaseEstimator, TransformerMixin):
     def predict(self, X):
         if torch.is_tensor(X):
             X = X.detach().numpy()
-        if self.deep_svd_clf is None:
-            self.load_model()
         y_preds = []
         n = X.shape[0]
         chunk_size = 1000
