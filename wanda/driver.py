@@ -159,7 +159,7 @@ def optimize_hyperparameters_hscore_input():
         n_trials = 1
     best_study_svdd = optimize_svdd(transformed_X, labels, n_trials=n_trials)
     best_model = best_study_svdd.__getattribute__("_best_model")
-    save_object(best_model, DeepSVDDModel.model_path)
+    # save_object(best_model, DeepSVDDModel.model_path)
     print(
         f"Deep SVDD Best Params: {best_study_svdd.best_params}. Best Value: {-1*best_study_svdd.best_value}"
     )
