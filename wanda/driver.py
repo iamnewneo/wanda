@@ -68,7 +68,7 @@ def one_class_model_train():
 
 def evaluate_best_models_hscore_input():
     test_loader = create_hs_data_loader(
-        batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=True, greyscale=True
+        batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=True, greyscale=False
     )
     hs_data_preprocessor = HSCnnDataPreprocessor()
     transformed_X, labels, ids = hs_data_preprocessor.get_preprocess_data(
@@ -86,10 +86,10 @@ def evaluate_best_models_hscore_input():
     model_evaluator = Evaluator(model=clf)
     model_evaluator.evaulate(transformed_X, labels, ids)
 
-    # clf = DeepSVDDModel(contamination=0.36)
-    # clf.fit(transformed_X)
-    # model_evaluator = Evaluator(model=clf)
-    # model_evaluator.evaulate(transformed_X, labels, ids)
+    clf = DeepSVDDModel(contamination=0.23781187437103915)
+    clf.fit(transformed_X)
+    model_evaluator = Evaluator(model=clf)
+    model_evaluator.evaulate(transformed_X, labels, ids)
 
 
 def evaluate_best_models_plain():
@@ -112,10 +112,10 @@ def evaluate_best_models_plain():
     model_evaluator = Evaluator(model=clf)
     model_evaluator.evaulate(transformed_X, labels, ids, save_postfix="plain")
 
-    # clf = DeepSVDDModel(contamination=0.36)
-    # clf.fit(transformed_X)
-    # model_evaluator = Evaluator(model=clf)
-    # model_evaluator.evaulate(transformed_X, labels, ids, save_postfix="plain")
+    clf = DeepSVDDModel(contamination=0.43351217124174224)
+    clf.fit(transformed_X)
+    model_evaluator = Evaluator(model=clf)
+    model_evaluator.evaulate(transformed_X, labels, ids, save_postfix="plain")
 
 
 def visualize_activation_maps():
