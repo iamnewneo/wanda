@@ -1,8 +1,23 @@
 import torch
+import pickle
 import torchvision.transforms as transforms
 
 MEAN = [0.2112, 0.3528, 0.7894]
 STD = [0.0742, 0.1805, 0.1066]
+
+
+def save_object(obj, path):
+    with open(path, "wb") as outp:
+        pickle.dump(obj, outp, pickle.HIGHEST_PROTOCOL)
+        return True
+    return False
+
+
+def load_object(path):
+    read_object = None
+    with open(path, "rb") as inp:
+        read_object = pickle.load(inp)
+        return read_object
 
 
 def get_tranforms():

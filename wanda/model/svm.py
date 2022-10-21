@@ -1,38 +1,31 @@
 import torch
 import joblib
 import numpy as np
-from sklearn.svm import OneClassSVM
 from sklearn import linear_model
+from sklearn.base import BaseEstimator, TransformerMixin
 from tqdm import tqdm
 from wanda import config
 
 
-class SVMModel:
-    def __init__(self) -> None:
+class SVMModel(BaseEstimator, TransformerMixin):
+    def __init__(self, nu, power_t) -> None:
+        self.nu = nu
+        self.power_t = power_t
         self.model_name = "SVM"
         self.svm_clf = None
         self.svm_model_path = f"{config.BASE_PATH}/models/WandaSVM.pkl"
 
-    def fit(self, preprocessed_data):
+    def fit(self, preprocessed_data, y=None):
         if torch.is_tensor(preprocessed_data):
             preprocessed_data = preprocessed_data.detach().numpy()
-        try:
-            self.svm_clf = linear_model.SGDOneClassSVM(
-                nu=0.1,
-                max_iter=50000,
-                verbose=True,
-                random_state=42,
-                learning_rate="optimal",
-            ).fit(preprocessed_data)
-        except:
-            self.svm_clf = OneClassSVM(
-                nu=0.1,
-                gamma="auto",
-                degree=5,
-                max_iter=10000,
-                cache_size=2000,
-                verbose=True,
-            ).fit(preprocessed_data)
+        self.svm_clf = linear_model.SGDOneClassSVM(
+            nu=self.nu,
+            power_t=self.power_t,
+            max_iter=50000,
+            verbose=False,
+            random_state=42,
+            learning_rate="optimal",
+        ).fit(preprocessed_data)
 
     def predict(self, X):
         if torch.is_tensor(X):
@@ -50,6 +43,13 @@ class SVMModel:
             y_preds = self.svm_clf.predict(X)
         y_preds = np.array(y_preds).flatten()
         return y_preds
+
+    def predict_proba(self, X):
+        y = self.predict(X)
+        return y
+
+    def decision_function(self, X):
+        return self.predict_proba(X)
 
     def save_model(self):
         if self.svm_clf is not None:

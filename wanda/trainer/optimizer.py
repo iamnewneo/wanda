@@ -1,12 +1,11 @@
-import torch
 import optuna
 from optuna import Trial
-from sklearn.ensemble import IsolationForest
-from sklearn.metrics import roc_auc_score
-from sklearn.model_selection import train_test_split
 from sklearn.svm import OneClassSVM
 from sklearn import linear_model
+from sklearn.model_selection import cross_val_score
 from wanda.model.od_algos import DeepSVDDModel, ECODModel
+from wanda.model.isolation_forest import IsoForestModel
+from wanda.model.svm import SVMModel
 from wanda import config
 
 optuna.logging.set_verbosity(optuna.logging.WARNING)
@@ -16,21 +15,17 @@ def optimize_iso_forest_fn(trial, transformed_X, labels):
     n_estimators = trial.suggest_int("n_estimators", 50, 500)
     max_features = trial.suggest_uniform("max_features", 0.2, 0.95)
     contamination = trial.suggest_uniform("contamination", 0.1, 0.5)
-    X_train, X_val, y_train, y_val = train_test_split(
-        transformed_X, labels, random_state=0
-    )
-    iso_forest_clf = IsolationForest(
+    iso_forest_clf = IsoForestModel(
         random_state=42,
         n_estimators=n_estimators,
         max_features=max_features,
         contamination=contamination,
         n_jobs=config.N_JOBS,
     )
-    iso_forest_clf.fit(X_train)
-    y_pred = iso_forest_clf.predict(X_val)
-
-    auc_score = roc_auc_score(y_val, y_pred)
-
+    scores = cross_val_score(
+        iso_forest_clf, transformed_X, labels, cv=5, scoring="roc_auc"
+    )
+    auc_score = scores.mean()
     return -1 * auc_score
 
 
@@ -38,54 +33,25 @@ def optimize_svm_fn(trial, transformed_X, labels):
     svm_clf = None
     nu = trial.suggest_uniform("nu", 0.05, 0.95)
     power_t = trial.suggest_uniform("power_t", 0.1, 0.9)
-    X_train, X_val, y_train, y_val = train_test_split(
-        transformed_X, labels, random_state=0
-    )
-    try:
-        svm_clf = linear_model.SGDOneClassSVM(
-            nu=nu,
-            max_iter=50000,
-            random_state=42,
-            learning_rate="optimal",
-            tol=1e-5,
-            power_t=power_t,
-        ).fit(X_train)
-    except:
-        svm_clf = OneClassSVM(
-            kernel="rbf",
-            nu=nu,
-            gamma="auto",
-            max_iter=10000,
-            cache_size=2000,
-            tol=1e-7,
-        ).fit(X_train)
-
-    y_pred = svm_clf.predict(X_val)
-    auc_score = roc_auc_score(y_val, y_pred)
+    svm_clf = SVMModel(nu=nu, power_t=power_t)
+    scores = cross_val_score(svm_clf, transformed_X, labels, cv=5, scoring="roc_auc")
+    auc_score = scores.mean()
     return -1 * auc_score
 
 
 def optimize_deep_svdd_fn(trial, transformed_X, labels):
     contamination = trial.suggest_uniform("contamination", 0.1, 0.45)
     svdd_clf = DeepSVDDModel(contamination=contamination)
-    X_train, X_val, y_train, y_val = train_test_split(
-        transformed_X, labels, random_state=0
-    )
-    svdd_clf.fit(X_train)
-    y_pred = svdd_clf.predict(X_val)
-    auc_score = roc_auc_score(y_val, y_pred)
+    scores = cross_val_score(svdd_clf, transformed_X, labels, cv=5, scoring="roc_auc")
+    auc_score = scores.mean()
     return -1 * auc_score
 
 
 def optimize_ecod_fn(trial, transformed_X, labels):
     contamination = trial.suggest_uniform("contamination", 0.1, 0.45)
     ecod_clf = ECODModel(contamination=contamination)
-    X_train, X_val, y_train, y_val = train_test_split(
-        transformed_X, labels, random_state=0
-    )
-    ecod_clf.fit(X_train)
-    y_pred = ecod_clf.predict(X_val)
-    auc_score = roc_auc_score(y_val, y_pred)
+    scores = cross_val_score(ecod_clf, transformed_X, labels, cv=5, scoring="roc_auc")
+    auc_score = scores.mean()
     return -1 * auc_score
 
 

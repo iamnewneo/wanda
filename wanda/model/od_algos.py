@@ -2,19 +2,20 @@ import torch
 import joblib
 import numpy as np
 from tqdm import tqdm
+from sklearn.base import BaseEstimator, TransformerMixin
 from wanda import config
 from pyod.models.ecod import ECOD
 from pyod.models.deep_svdd import DeepSVDD
 
 
-class ECODModel:
+class ECODModel(BaseEstimator, TransformerMixin):
     def __init__(self, contamination) -> None:
         self.model_name = "ECOD"
         self.ecod_clf = None
         self.ecod_model_path = f"{config.BASE_PATH}/models/ECOD.pkl"
         self.contamination = contamination
 
-    def fit(self, preprocessed_data):
+    def fit(self, preprocessed_data, y=None):
         if torch.is_tensor(preprocessed_data):
             preprocessed_data = preprocessed_data.detach().numpy()
         n_jobs = 16
@@ -41,6 +42,13 @@ class ECODModel:
         y_preds = np.array(y_preds).flatten()
         return y_preds
 
+    def predict_proba(self, X):
+        y = self.predict(X)
+        return y
+
+    def decision_function(self, X):
+        return self.predict_proba(X)
+
     def save_model(self):
         if self.ecod_clf is not None:
             joblib.dump(self.ecod_clf, self.ecod_model_path)
@@ -50,14 +58,14 @@ class ECODModel:
         self.ecod_clf = joblib.load(self.ecod_model_path)
 
 
-class DeepSVDDModel:
+class DeepSVDDModel(BaseEstimator, TransformerMixin):
     def __init__(self, contamination) -> None:
         self.model_name = "Deep SVDD"
         self.deep_svd_clf = None
         self.deep_svd_model_path = f"{config.BASE_PATH}/models/DeepSVDD.pkl"
         self.contamination = contamination
 
-    def fit(self, preprocessed_data):
+    def fit(self, preprocessed_data, y=None):
         if torch.is_tensor(preprocessed_data):
             preprocessed_data = preprocessed_data.detach().numpy()
         epochs = 30
@@ -70,6 +78,7 @@ class DeepSVDDModel:
             epochs=epochs,
             batch_size=config.BATCH_SIZE,
             validation_size=0.2,
+            verbose=0,
         ).fit(preprocessed_data)
 
     def predict(self, X):
@@ -88,6 +97,13 @@ class DeepSVDDModel:
             y_preds = self.deep_svd_clf.predict(X)
         y_preds = np.array(y_preds).flatten()
         return y_preds
+
+    def predict_proba(self, X):
+        y = self.predict(X)
+        return y
+
+    def decision_function(self, X):
+        return self.predict_proba(X)
 
     def save_model(self):
         if self.deep_svd_clf is not None:
