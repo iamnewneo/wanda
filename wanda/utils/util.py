@@ -1,9 +1,15 @@
 import torch
 import pickle
+import numpy as np
 import torchvision.transforms as transforms
 
 MEAN = [0.2112, 0.3528, 0.7894]
 STD = [0.0742, 0.1805, 0.1066]
+
+
+def switch_labels(a):
+    a = np.array(a)
+    return np.where((a == 0) | (a == 1), a ^ 1, a)
 
 
 def save_object(obj, path):

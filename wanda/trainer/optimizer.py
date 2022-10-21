@@ -7,7 +7,7 @@ from wanda.model.isolation_forest import IsoForestModel
 from wanda.model.svm import SVMModel
 from wanda import config
 
-optuna.logging.set_verbosity(optuna.logging.WARNING)
+optuna.logging.set_verbosity(optuna.logging.ERROR)
 
 DEFAULT_N_TRIALS = 200
 
