@@ -19,7 +19,7 @@ from wanda.model.od_algos import DeepSVDDModel, ECODModel
 from wanda.model.isolation_forest import IsoForestModel
 from wanda.model.svm import SVMModel
 from wanda.model.decompose import DecomposeData
-from wanda.utils.util import load_object, save_object
+from wanda.utils.util import load_object, save_object, save_text_results
 from wanda.analyzer.analyze import detail_analyze_model
 
 
@@ -28,7 +28,7 @@ def main():
     # one_class_model_train()
     # visualize_activation_maps()
 
-    train_data_decomposer()
+    # train_data_decomposer()
 
     test_loader = create_hs_data_loader(
         batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=False, greyscale=False
@@ -221,19 +221,14 @@ def optimize_hyperparameters_hscore_input(transformed_X, labels, ids):
 
     print("*" * 100)
     print("*" * 100)
-    print("Summary: Models Performance with H-Score Input")
-    print(
-        f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
-    )
-    print(
-        f"SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
-    )
-    print(
-        f"ECOD Best Params: {best_study_ecod.best_params}. Best Value: {-1*best_study_ecod.best_value}"
-    )
-    print(
-        f"Deep SVDD Best Params: {best_study_svdd.best_params}. Best Value: {-1*best_study_svdd.best_value}"
-    )
+    result_string = f"""Summary: Models Performance with H-Score Input
+    Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}
+    SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}
+    ECOD Best Params: {best_study_ecod.best_params}. Best Value: {-1*best_study_ecod.best_value}
+    Deep SVDD Best Params: {best_study_svdd.best_params}. Best Value: {-1*best_study_svdd.best_value}
+    """
+    print(result_string)
+    save_text_results(result_string, path=f"{config.BASE_PATH}/data/wih_HS_summary.txt")
     print("*" * 100)
     print("*" * 100)
 
@@ -275,18 +270,15 @@ def optimize_hyperparameters_plain_input(transformed_X, labels, ids):
     )
     print("*" * 100)
     print("*" * 100)
-    print("Summary: Models Performance without H-Score Input/Plain Input")
-    print(
-        f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
-    )
-    print(
-        f"SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
-    )
-    print(
-        f"ECOD Best Params: {best_study_ecod.best_params}. Best Value: {-1*best_study_ecod.best_value}"
-    )
-    print(
-        f"Deep SVDD Best Params: {best_study_svdd.best_params}. Best Value: {-1*best_study_svdd.best_value}"
+    result_string = f"""Summary: Models Performance without H-Score Input/Plain Input
+    Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}
+    SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}
+    ECOD Best Params: {best_study_ecod.best_params}. Best Value: {-1*best_study_ecod.best_value}
+    Deep SVDD Best Params: {best_study_svdd.best_params}. Best Value: {-1*best_study_svdd.best_value}
+    """
+    print(result_string)
+    save_text_results(
+        result_string, path=f"{config.BASE_PATH}/data/without_HS_summary.txt"
     )
     print("*" * 100)
     print("*" * 100)

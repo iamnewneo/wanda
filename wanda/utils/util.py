@@ -21,6 +21,11 @@ def save_object(obj, path):
     #     return True
 
 
+def save_text_results(res, path):
+    with open(path, "w") as f:
+        f.write(res)
+
+
 def load_object(path):
     read_object = joblib.load(path)
     print(f"Loaded: {read_object.__class__.__name__} from: {path}")
