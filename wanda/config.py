@@ -15,12 +15,12 @@ configs = {
     "prod": {
         "DEVICE": "cuda",
         "BATCH_SIZE": 256,
-        "TEST_BATCH_SIZE": 16384,
+        "TEST_BATCH_SIZE": 4096,
         "MAX_EPOCHS": 100,
         "LR": 0.00005,
         "N_WORKER": 32,
         "N_OPT_TRIALS": 100,
-        "N_JOBS": 32,
+        "N_JOBS": 16,
     },
 }
 
