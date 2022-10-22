@@ -1,5 +1,6 @@
 import torch
 import pickle
+import joblib
 import numpy as np
 import torchvision.transforms as transforms
 
@@ -14,18 +15,21 @@ def switch_labels(a):
 
 def save_object(obj, path):
     print(f"Saving: {obj.__class__.__name__} at: {path}")
-    with open(path, "wb") as outp:
-        pickle.dump(obj, outp, pickle.HIGHEST_PROTOCOL)
-        return True
-    return False
+    joblib.dump(obj, path)
+    # with open(path, "wb") as outp:
+    #     pickle.dump(obj, outp, pickle.HIGHEST_PROTOCOL)
+    #     return True
 
 
 def load_object(path):
-    read_object = None
-    with open(path, "rb") as inp:
-        read_object = pickle.load(inp)
-        print(f"Loaded: {read_object.__class__.__name__} from: {path}")
+    read_object = joblib.load(path)
+    print(f"Loaded: {read_object.__class__.__name__} from: {path}")
     return read_object
+    # read_object = None
+    # with open(path, "rb") as inp:
+    #     read_object = pickle.load(inp)
+    #     print(f"Loaded: {read_object.__class__.__name__} from: {path}")
+    # return read_object
 
 
 def get_tranforms():
