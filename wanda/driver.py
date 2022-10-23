@@ -24,11 +24,11 @@ from wanda.analyzer.analyze import detail_analyze_model
 
 
 def main():
-    # train_h_score_cnn()
+    train_h_score_cnn()
     # one_class_model_train()
     # visualize_activation_maps()
 
-    # train_data_decomposer()
+    train_data_decomposer()
 
     test_loader = create_hs_data_loader(
         batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=False, greyscale=False
