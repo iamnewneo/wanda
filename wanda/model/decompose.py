@@ -1,7 +1,7 @@
 from umap import UMAP
 from sklearn.manifold import Isomap
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.decomposition import TruncatedSVD
+from sklearn.decomposition import KernelPCA
 from wanda import config
 
 
@@ -19,7 +19,7 @@ class DecomposeData(BaseEstimator, TransformerMixin):
         #     n_jobs=config.N_JOBS,
         # )
         # self.clf = TruncatedSVD(n_components=100, n_iter=20, random_state=42)
-        self.clf = Isomap(n_components=100, n_neighbors=10, n_jobs=config.N_JOBS)
+        self.clf = KernelPCA(n_components=100, random_state=42, n_jobs=config.N_JOBS)
 
     def fit(self, X, y=None):
         self.clf.fit(X)
