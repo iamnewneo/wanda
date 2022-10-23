@@ -28,12 +28,12 @@ def main():
     # one_class_model_train()
     # visualize_activation_maps()
 
-    train_data_decomposer()
+    # train_data_decomposer()
 
     test_loader = create_hs_data_loader(
         batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=False, greyscale=False
     )
-    hs_data_preprocessor = HSCnnDataPreprocessor()
+    hs_data_preprocessor = HSCnnDataPreprocessor(svd_tranformation=False)
     transformed_X_hs, labels_hs, ids_hs = hs_data_preprocessor.get_preprocess_data(
         data_loader=test_loader, ids=True
     )
@@ -47,13 +47,18 @@ def main():
     if torch.is_tensor(ids_hs):
         ids_hs = ids_hs.detach().numpy()
 
+    print(transformed_X_hs.shape)
+
     test_loader = create_hs_data_loader(
         batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=False, greyscale=True
     )
-    sk_data_preprocessor = SkDataPreprocessor()
+    sk_data_preprocessor = SkDataPreprocessor(svd_tranformation=False)
     transformed_X_sk, labels_sk, ids_sk = sk_data_preprocessor.get_preprocess_data(
         data_loader=test_loader, ids=True
     )
+
+    print(transformed_X_sk.shape)
+    exit()
 
     if torch.is_tensor(transformed_X_sk):
         transformed_X_sk = transformed_X_sk.detach().numpy()
