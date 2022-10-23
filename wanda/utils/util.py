@@ -8,6 +8,12 @@ MEAN = [0.2112, 0.3528, 0.7894]
 STD = [0.0742, 0.1805, 0.1066]
 
 
+def get_numpy(x):
+    if torch.is_tensor(x):
+        x = x.detach().numpy()
+    return x
+
+
 def switch_labels(a):
     a = np.array(a)
     return np.where((a == 0) | (a == 1), a ^ 1, a)

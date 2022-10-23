@@ -20,78 +20,71 @@ trial_model_dict = {
 }
 
 
-def optimize_iso_forest_fn(trial, transformed_X, labels):
+def optimize_iso_forest_fn(trial, train_dict, test_dict):
     n_estimators = trial.suggest_int("n_estimators", 50, 500)
     max_features = trial.suggest_uniform("max_features", 0.2, 0.95)
     contamination = trial.suggest_uniform("contamination", 0.1, 0.5)
-    scores = []
-    k_fold = StratifiedKFold(n_splits=5)
-    for train_indices, test_indices in k_fold.split(transformed_X, labels):
-        iso_forest_clf = IsoForestModel(
-            random_state=42,
-            n_estimators=n_estimators,
-            max_features=max_features,
-            contamination=contamination,
-            n_jobs=config.N_JOBS,
-        )
-        iso_forest_clf.fit(transformed_X[train_indices], labels[train_indices])
-        y_pred = iso_forest_clf.decision_function(transformed_X[test_indices])
-        scores.append(roc_auc_score(switch_labels(labels[test_indices]), y_pred))
-    auc_score = sum(scores) / len(scores)
+    iso_forest_clf = IsoForestModel(
+        random_state=42,
+        n_estimators=n_estimators,
+        max_features=max_features,
+        contamination=contamination,
+        n_jobs=config.N_JOBS,
+    )
+    transformed_X_train = train_dict["transformed_X"]
+    transformed_X_test = test_dict["transformed_X"]
+    labels_test = test_dict["labels"]
+    iso_forest_clf.fit(transformed_X_train)
+    y_pred = iso_forest_clf.decision_function(transformed_X_test)
+    auc_score = roc_auc_score(switch_labels(labels_test), y_pred)
     trial_model_dict["ISOF"][trial.number] = iso_forest_clf
     return -1 * auc_score
 
 
-def optimize_svm_fn(trial, transformed_X, labels):
+def optimize_svm_fn(trial, train_dict, test_dict):
     nu = trial.suggest_uniform("nu", 0.05, 0.95)
     power_t = trial.suggest_uniform("power_t", 0.1, 0.9)
-    scores = []
-    k_fold = StratifiedKFold(n_splits=5)
-    for train_indices, test_indices in k_fold.split(transformed_X, labels):
-        svm_clf = SVMModel(nu=nu, power_t=power_t)
-        svm_clf.fit(transformed_X[train_indices], labels[train_indices])
-        y_pred = svm_clf.decision_function(transformed_X[test_indices])
-        scores.append(roc_auc_score(switch_labels(labels[test_indices]), y_pred))
-    auc_score = sum(scores) / len(scores)
+    svm_clf = SVMModel(nu=nu, power_t=power_t)
+    transformed_X_train = train_dict["transformed_X"]
+    transformed_X_test = test_dict["transformed_X"]
+    labels_test = test_dict["labels"]
+    svm_clf.fit(transformed_X_train)
+    y_pred = svm_clf.decision_function(transformed_X_test)
+    auc_score = roc_auc_score(switch_labels(labels_test), y_pred)
     trial_model_dict["SVM"][trial.number] = svm_clf
     return -1 * auc_score
 
 
-def optimize_deep_svdd_fn(trial, transformed_X, labels):
+def optimize_deep_svdd_fn(trial, train_dict, test_dict):
     contamination = trial.suggest_uniform("contamination", 0.1, 0.45)
-    scores = []
-    k_fold = StratifiedKFold(n_splits=5)
-    for train_indices, test_indices in k_fold.split(transformed_X, labels):
-        svdd_clf = DeepSVDDModel(contamination=contamination)
-        svdd_clf.fit(transformed_X[train_indices], labels[train_indices])
-        y_pred = svdd_clf.decision_function(transformed_X[test_indices])
-        scores.append(roc_auc_score(switch_labels(labels[test_indices]), y_pred))
-    auc_score = sum(scores) / len(scores)
+    svdd_clf = DeepSVDDModel(contamination=contamination)
+    transformed_X_train = train_dict["transformed_X"]
+    transformed_X_test = test_dict["transformed_X"]
+    labels_test = test_dict["labels"]
+    svdd_clf.fit(transformed_X_train)
+    y_pred = svdd_clf.decision_function(transformed_X_test)
+    auc_score = roc_auc_score(switch_labels(labels_test), y_pred)
     trial_model_dict["SVDD"][trial.number] = svdd_clf
     return -1 * auc_score
 
 
-def optimize_ecod_fn(trial, transformed_X, labels):
+def optimize_ecod_fn(trial, train_dict, test_dict):
     contamination = trial.suggest_uniform("contamination", 0.1, 0.45)
-    scores = []
-    k_fold = StratifiedKFold(n_splits=5)
-    for train_indices, test_indices in k_fold.split(transformed_X, labels):
-        ecod_clf = ECODModel(contamination=contamination)
-        ecod_clf.fit(transformed_X[train_indices], labels[train_indices])
-        y_pred = ecod_clf.decision_function(transformed_X[test_indices])
-        scores.append(roc_auc_score(switch_labels(labels[test_indices]), y_pred))
-    auc_score = sum(scores) / len(scores)
+    ecod_clf = ECODModel(contamination=contamination)
+    transformed_X_train = train_dict["transformed_X"]
+    transformed_X_test = test_dict["transformed_X"]
+    labels_test = test_dict["labels"]
+    ecod_clf.fit(transformed_X_train)
+    y_pred = ecod_clf.decision_function(transformed_X_test)
+    auc_score = roc_auc_score(switch_labels(labels_test), y_pred)
     trial_model_dict["ECOD"][trial.number] = ecod_clf
-    scores = cross_val_score(ecod_clf, transformed_X, labels, cv=5, scoring="roc_auc")
-    auc_score = scores.mean()
-    trial.set_user_attr(key="best_model", value=ecod_clf)
     return -1 * auc_score
 
 
-def optimize_iso_forest(transformed_X, labels, n_trials):
+def optimize_iso_forest(train_dict, test_dict, n_trials):
     study = optuna.create_study(direction="minimize")
     study.optimize(
-        lambda trial: optimize_iso_forest_fn(trial, transformed_X, labels),
+        lambda trial: optimize_iso_forest_fn(trial, train_dict, test_dict),
         n_trials=n_trials,
         n_jobs=config.N_JOBS,
     )
@@ -99,10 +92,10 @@ def optimize_iso_forest(transformed_X, labels, n_trials):
     return study
 
 
-def optimize_svm(transformed_X, labels, n_trials):
+def optimize_svm(train_dict, test_dict, n_trials):
     study = optuna.create_study(direction="minimize")
     study.optimize(
-        lambda trial: optimize_svm_fn(trial, transformed_X, labels),
+        lambda trial: optimize_svm_fn(trial, train_dict, test_dict),
         n_trials=n_trials,
         n_jobs=config.N_JOBS,
     )
@@ -110,10 +103,10 @@ def optimize_svm(transformed_X, labels, n_trials):
     return study
 
 
-def optimize_svdd(transformed_X, labels, n_trials):
+def optimize_svdd(train_dict, test_dict, n_trials):
     study = optuna.create_study(direction="minimize")
     study.optimize(
-        lambda trial: optimize_deep_svdd_fn(trial, transformed_X, labels),
+        lambda trial: optimize_deep_svdd_fn(trial, train_dict, test_dict),
         n_trials=n_trials,
         n_jobs=4,
     )
@@ -121,10 +114,10 @@ def optimize_svdd(transformed_X, labels, n_trials):
     return study
 
 
-def optimize_ecod(transformed_X, labels, n_trials):
+def optimize_ecod(train_dict, test_dict, n_trials):
     study = optuna.create_study(direction="minimize")
     study.optimize(
-        lambda trial: optimize_ecod_fn(trial, transformed_X, labels),
+        lambda trial: optimize_ecod_fn(trial, train_dict, test_dict),
         n_trials=n_trials,
         n_jobs=config.N_JOBS,
     )
