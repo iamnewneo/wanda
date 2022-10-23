@@ -47,8 +47,6 @@ def main():
     if torch.is_tensor(ids_hs):
         ids_hs = ids_hs.detach().numpy()
 
-    print(transformed_X_hs.shape)
-
     test_loader = create_hs_data_loader(
         batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=False, greyscale=True
     )
@@ -56,9 +54,6 @@ def main():
     transformed_X_sk, labels_sk, ids_sk = sk_data_preprocessor.get_preprocess_data(
         data_loader=test_loader, ids=True
     )
-
-    print(transformed_X_sk.shape)
-    exit()
 
     if torch.is_tensor(transformed_X_sk):
         transformed_X_sk = transformed_X_sk.detach().numpy()
