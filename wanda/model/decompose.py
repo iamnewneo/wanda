@@ -9,16 +9,16 @@ class DecomposeData(BaseEstimator, TransformerMixin):
     model_path = f"{config.BASE_PATH}/models/DecomposeModel.pkl"
 
     def __init__(self) -> None:
-        # self.clf = UMAP(
-        #     random_state=42,
-        #     n_components=100,
-        #     n_neighbors=15,
-        #     min_dist=0.15,
-        #     metric="correlation",
-        #     verbose=False,
-        #     n_jobs=config.N_JOBS,
-        # )
-        self.clf = TruncatedSVD(n_components=100, random_state=42)
+        self.clf = UMAP(
+            random_state=42,
+            n_components=100,
+            n_neighbors=15,
+            min_dist=0.15,
+            metric="correlation",
+            verbose=False,
+            n_jobs=config.N_JOBS,
+        )
+        # self.clf = TruncatedSVD(n_components=100, random_state=42)
         # self.clf = KernelPCA(n_components=100, random_state=42, n_jobs=config.N_JOBS)
         # self.clf = PCA(n_components=100, random_state=42)
 
