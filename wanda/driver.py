@@ -128,6 +128,8 @@ def train_data_decomposer():
     transformed_X, labels = hs_data_preprocessor.get_preprocess_data(
         data_loader=train_test_comb_dataloader
     )
+    transformed_X = get_numpy(transformed_X)
+    labels = get_numpy(labels)
 
     clf = DecomposeData()
     clf.fit(transformed_X)
@@ -136,6 +138,8 @@ def train_data_decomposer():
     train_test_comb_dataloader = create_combined_dataloader(
         batch_size=config.TEST_BATCH_SIZE, shuffle=False, greyscale=True
     )
+    transformed_X = get_numpy(transformed_X)
+    labels = get_numpy(labels)
 
     sk_data_preprocessor = SkDataPreprocessor(svd_tranformation=False)
     transformed_X, labels = sk_data_preprocessor.get_preprocess_data(
