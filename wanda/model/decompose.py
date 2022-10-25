@@ -20,7 +20,7 @@ class DecomposeData(BaseEstimator, TransformerMixin):
         )
         # self.clf = TruncatedSVD(n_components=100, random_state=42)
         # self.clf = KernelPCA(n_components=100, random_state=42, n_jobs=config.N_JOBS)
-        # self.clf = PCA(n_components=100, random_state=42)
+        self.clf = PCA(n_components=100, random_state=42)
 
     def fit(self, X, y=None):
         self.clf.fit(X)

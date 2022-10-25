@@ -34,7 +34,7 @@ class HSCnnDataPreprocessor:
         labels = []
         ids_list = []
         with torch.no_grad():
-            for idx, batch in enumerate(data_loader):
+            for idx, batch in tqdm(enumerate(data_loader)):
                 X_1_images = batch["X_1"]
                 activation_maps, _ = self.cnn_hs(X_1_images)
                 activation_maps = torch.flatten(activation_maps, start_dim=1)
@@ -77,7 +77,7 @@ class SkDataPreprocessor:
         labels = []
         ids_list = []
         with torch.no_grad():
-            for idx, batch in enumerate(data_loader):
+            for idx, batch in tqdm(enumerate(data_loader)):
                 X_1_images = batch["X_1"]
                 image_np_array = X_1_images.detach().numpy()
                 image_np_array = np.squeeze(image_np_array, axis=1)

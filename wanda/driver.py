@@ -1,3 +1,7 @@
+from sklearnex import patch_sklearn
+
+patch_sklearn()
+
 import torch
 from os.path import exists as file_exists
 from wanda import config
@@ -27,11 +31,11 @@ from wanda.analyzer.analyze import detail_analyze_model
 
 
 def main():
-    train_h_score_cnn()
+    # train_h_score_cnn()
     # one_class_model_train()
     # visualize_activation_maps()
 
-    # train_data_decomposer()
+    train_data_decomposer()
 
     train_dict_hs = {}
     test_dict_hs = {}
@@ -45,7 +49,7 @@ def main():
         batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=False, greyscale=False
     )
     # hs_data_preprocessor = HSCnnDataPreprocessor()
-    hs_data_preprocessor = HSCnnDataPreprocessor(svd_tranformation=False)
+    hs_data_preprocessor = HSCnnDataPreprocessor()
     transformed_X, labels, ids = hs_data_preprocessor.get_preprocess_data(
         data_loader=train_loader, ids=True
     )
@@ -73,7 +77,7 @@ def main():
         batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=False, greyscale=True
     )
     # hs_data_preprocessor = SkDataPreprocessor()
-    hs_data_preprocessor = SkDataPreprocessor(svd_tranformation=False)
+    hs_data_preprocessor = SkDataPreprocessor()
     transformed_X, labels, ids = hs_data_preprocessor.get_preprocess_data(
         data_loader=train_loader, ids=True
     )
