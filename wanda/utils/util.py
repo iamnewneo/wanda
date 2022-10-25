@@ -2,6 +2,7 @@ import torch
 import pickle
 import joblib
 import numpy as np
+from sklearn.metrics import roc_auc_score
 import torchvision.transforms as transforms
 
 MEAN = [0.2112, 0.3528, 0.7894]
@@ -17,6 +18,16 @@ def get_numpy(x):
 def switch_labels(a):
     a = np.array(a)
     return np.where((a == 0) | (a == 1), a ^ 1, a)
+
+
+def get_auc_score(y_true, y_pred):
+    """
+    Switch labels because higher decision functionm score means
+    no anomaly and negative value means anomaly
+    and our dataset has 1 as anomaly and 0 as non anomaly
+    so we switch our labels before calculating auc to align them properly
+    """
+    return roc_auc_score(switch_labels(y_true), y_pred)
 
 
 def save_object(obj, path):
@@ -46,8 +57,8 @@ def load_object(path):
 def get_tranforms():
     return transforms.Compose(
         [
-            transforms.Resize(224),
-            transforms.CenterCrop(224),
+            transforms.Resize(256),
+            transforms.CenterCrop(256),
             transforms.ToTensor(),
             # transforms.Normalize(mean=MEAN, std=STD),
             # transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),

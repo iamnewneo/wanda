@@ -4,7 +4,7 @@ from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedKFold, cross_val_score
 from wanda.model.od_algos import DeepSVDDModel, ECODModel
 from wanda.model.isolation_forest import IsoForestModel
-from wanda.utils.util import switch_labels
+from wanda.utils.util import switch_labels, get_auc_score
 from wanda.model.svm import SVMModel
 from wanda import config
 
@@ -36,7 +36,7 @@ def optimize_iso_forest_fn(trial, train_dict, test_dict):
     labels_test = test_dict["labels"]
     iso_forest_clf.fit(transformed_X_train)
     y_pred = iso_forest_clf.decision_function(transformed_X_test)
-    auc_score = roc_auc_score(switch_labels(labels_test), y_pred)
+    auc_score = get_auc_score(labels_test, y_pred)
     trial_model_dict["ISOF"][trial.number] = iso_forest_clf
     return -1 * auc_score
 
@@ -50,7 +50,7 @@ def optimize_svm_fn(trial, train_dict, test_dict):
     labels_test = test_dict["labels"]
     svm_clf.fit(transformed_X_train)
     y_pred = svm_clf.decision_function(transformed_X_test)
-    auc_score = roc_auc_score(switch_labels(labels_test), y_pred)
+    auc_score = get_auc_score(labels_test, y_pred)
     trial_model_dict["SVM"][trial.number] = svm_clf
     return -1 * auc_score
 
@@ -63,7 +63,7 @@ def optimize_deep_svdd_fn(trial, train_dict, test_dict):
     labels_test = test_dict["labels"]
     svdd_clf.fit(transformed_X_train)
     y_pred = svdd_clf.decision_function(transformed_X_test)
-    auc_score = roc_auc_score(switch_labels(labels_test), y_pred)
+    auc_score = get_auc_score(labels_test, y_pred)
     trial_model_dict["SVDD"][trial.number] = svdd_clf
     return -1 * auc_score
 
@@ -76,7 +76,7 @@ def optimize_ecod_fn(trial, train_dict, test_dict):
     labels_test = test_dict["labels"]
     ecod_clf.fit(transformed_X_train)
     y_pred = ecod_clf.decision_function(transformed_X_test)
-    auc_score = roc_auc_score(switch_labels(labels_test), y_pred)
+    auc_score = get_auc_score(labels_test, y_pred)
     trial_model_dict["ECOD"][trial.number] = ecod_clf
     return -1 * auc_score
 

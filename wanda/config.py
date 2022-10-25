@@ -17,7 +17,7 @@ configs = {
         "BATCH_SIZE": 256,
         "TEST_BATCH_SIZE": 4096,
         "MAX_EPOCHS": 200,
-        "LR": 0.00005,
+        "LR": 0.0001,
         "N_WORKER": 8,
         "N_OPT_TRIALS": 100,
         "N_JOBS": 16,

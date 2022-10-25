@@ -3,7 +3,7 @@ import pandas as pd
 from wanda.config import BASE_PATH
 import matplotlib.pyplot as plt
 import numpy as np
-from wanda.utils.util import switch_labels
+from wanda.utils.util import switch_labels, get_auc_score
 
 # MODELS = ["SVM", "ISOF", "ECOD"]
 MODELS = ["SVM", "ISOF", "ECOD", "SVDD"]
@@ -12,7 +12,7 @@ MODELS = ["SVM", "ISOF", "ECOD", "SVDD"]
 def auc_group(df):
     y_hat = df.label
     y = df.pred_label
-    return roc_auc_score(switch_labels(y_hat), y)
+    return get_auc_score(y_hat, y)
 
 
 def detail_analyze_model():

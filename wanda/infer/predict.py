@@ -51,7 +51,7 @@ class Evaluator:
         #     else:
         #         tranformed_preds.append(0)
         # labels[-1] = 0
-        auc_score = roc_auc_score(switch_labels(labels), preds)
+        auc_score = get_auc_score(labels, preds)
         # accuracy = accuracy_score(labels, tranformed_preds)
 
         print(f"{self.model.model_name} Model Performance:")
