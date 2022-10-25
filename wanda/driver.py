@@ -31,7 +31,7 @@ from wanda.analyzer.analyze import detail_analyze_model
 
 
 def main():
-    train_h_score_cnn()
+    # train_h_score_cnn()
     # one_class_model_train()
     # visualize_activation_maps()
 
