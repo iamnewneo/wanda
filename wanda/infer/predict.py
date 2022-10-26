@@ -4,7 +4,7 @@ from os.path import exists as file_exists
 from sklearn.metrics import roc_auc_score
 from wanda import config
 from wanda.preprocessing.data_reader import HSDataReader
-from wanda.utils.util import switch_labels
+from wanda.utils.util import switch_labels, get_auc_score
 
 
 class Evaluator:
