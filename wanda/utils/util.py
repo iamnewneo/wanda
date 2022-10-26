@@ -57,8 +57,8 @@ def load_object(path):
 def get_tranforms():
     return transforms.Compose(
         [
-            transforms.Resize(256),
-            transforms.CenterCrop(256),
+            transforms.Resize(128),
+            transforms.CenterCrop(128),
             transforms.ToTensor(),
             # transforms.Normalize(mean=MEAN, std=STD),
             # transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),

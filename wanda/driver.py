@@ -40,6 +40,8 @@ def main():
     test_dict_hs = {}
     train_dict_sk = {}
     test_dict_sk = {}
+    train_dict_hs_no_svd = {}
+    test_dict_hs_no_svd = {}
 
     train_loader = create_hs_data_loader(
         batch_size=config.TEST_BATCH_SIZE, train=True, shuffle=False, greyscale=False
@@ -48,7 +50,7 @@ def main():
         batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=False, greyscale=False
     )
     # hs_data_preprocessor = HSCnnDataPreprocessor()
-    hs_data_preprocessor = HSCnnDataPreprocessor()
+    hs_data_preprocessor = HSCnnDataPreprocessor(svd_tranformation=False)
     transformed_X, labels, ids = hs_data_preprocessor.get_preprocess_data(
         data_loader=train_loader, ids=True
     )
@@ -69,6 +71,35 @@ def main():
     test_dict_hs["labels"] = labels
     test_dict_hs["ids"] = ids
 
+    # hs_data_preprocessor_no_svd = HSCnnDataPreprocessor(svd_tranformation=False)
+    # (
+    #     transformed_X_no_svd,
+    #     labels_no_svd,
+    #     ids_no_svd,
+    # ) = hs_data_preprocessor_no_svd.get_preprocess_data(
+    #     data_loader=train_loader, ids=True
+    # )
+    # transformed_X_no_svd = get_numpy(transformed_X_no_svd)
+    # labels_no_svd = get_numpy(labels_no_svd)
+    # ids_no_svd = get_numpy(ids_no_svd)
+    # train_dict_hs_no_svd["transformed_X"] = transformed_X_no_svd
+    # train_dict_hs_no_svd["labels"] = labels_no_svd
+    # train_dict_hs_no_svd["ids"] = ids_no_svd
+
+    # (
+    #     transformed_X_no_svd,
+    #     labels_no_svd,
+    #     ids_no_svd,
+    # ) = hs_data_preprocessor_no_svd.get_preprocess_data(
+    #     data_loader=test_loader, ids=True
+    # )
+    # transformed_X_no_svd = get_numpy(transformed_X_no_svd)
+    # labels_no_svd = get_numpy(labels_no_svd)
+    # ids_no_svd = get_numpy(ids_no_svd)
+    # test_dict_hs_no_svd["transformed_X"] = transformed_X_no_svd
+    # test_dict_hs_no_svd["labels"] = labels_no_svd
+    # test_dict_hs_no_svd["ids"] = ids_no_svd
+
     train_loader = create_hs_data_loader(
         batch_size=config.TEST_BATCH_SIZE, train=True, shuffle=False, greyscale=True
     )
@@ -76,7 +107,7 @@ def main():
         batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=False, greyscale=True
     )
     # hs_data_preprocessor = SkDataPreprocessor()
-    hs_data_preprocessor = SkDataPreprocessor()
+    hs_data_preprocessor = SkDataPreprocessor(svd_tranformation=False)
     transformed_X, labels, ids = hs_data_preprocessor.get_preprocess_data(
         data_loader=train_loader, ids=True
     )
@@ -190,7 +221,7 @@ def evaluate_best_models_hscore_input(test_dict):
     model_evaluator = Evaluator(model=clf)
     model_evaluator.evaulate(transformed_X, labels, ids)
 
-    clf = DeepSVDDModel(contamination=0.23781187437103915)
+    clf = DeepSVDDModel(contamination=0.25)
     clf.fit(transformed_X)
     model_evaluator = Evaluator(model=clf)
     model_evaluator.evaulate(transformed_X, labels, ids)
@@ -217,7 +248,7 @@ def evaluate_best_models_plain(test_dict):
     model_evaluator = Evaluator(model=clf)
     model_evaluator.evaulate(transformed_X, labels, ids, save_postfix="plain")
 
-    clf = DeepSVDDModel(contamination=0.43351217124174224)
+    clf = DeepSVDDModel(contamination=0.25)
     clf.fit(transformed_X)
     model_evaluator = Evaluator(model=clf)
     model_evaluator.evaulate(transformed_X, labels, ids, save_postfix="plain")
