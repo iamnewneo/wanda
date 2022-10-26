@@ -1,6 +1,6 @@
-from sklearnex import patch_sklearn
+# from sklearnex import patch_sklearn
 
-patch_sklearn()
+# patch_sklearn()
 
 import torch
 from os.path import exists as file_exists
