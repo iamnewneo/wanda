@@ -31,8 +31,8 @@ from wanda.analyzer.analyze import detail_analyze_model
 
 
 def main():
-    train_h_score_cnn()
-    visualize_activation_maps()
+    # train_h_score_cnn()
+    # visualize_activation_maps()
 
     # train_data_decomposer()
 
