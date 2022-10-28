@@ -197,6 +197,26 @@ def train_data_decomposer():
 #     # lof_model = sk_model_trainer(model=lof_model, preprocessed_data=preprocessed_data)
 
 
+def train_and_evaluate_models_hscore_input(test_dict):
+    print("*" * 100)
+    print("Train Models and Evaluate With H-Score Input")
+    print("*" * 100)
+
+    transformed_X = test_dict["transformed_X"]
+    labels = test_dict["labels"]
+    ids = test_dict["ids"]
+
+    clf = SVMModel(nu=0.2, power_t=0.5)
+    clf.fit(transformed_X)
+    model_evaluator = Evaluator(model=clf)
+    model_evaluator.evaulate(transformed_X, labels, ids)
+
+    clf = ECODModel(contamination=0.2)
+    clf.fit(transformed_X)
+    model_evaluator = Evaluator(model=clf)
+    model_evaluator.evaulate(transformed_X, labels, ids)
+
+
 def evaluate_best_models_hscore_input(test_dict):
     print("*" * 100)
     print("Evaluating Models Performance With H-Score Input")

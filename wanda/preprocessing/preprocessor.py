@@ -2,8 +2,7 @@ import torch
 import numpy as np
 from tqdm import tqdm
 from wanda import config
-from sklearn.decomposition import TruncatedSVD
-from umap import UMAP
+from sklearn.preprocessing import StandardScaler
 from wanda.model.cnn_hscore import WandaHSCNN
 from wanda.model.decompose import DecomposeData
 from wanda.utils.util import load_object
@@ -21,6 +20,8 @@ class HSCnnDataPreprocessor:
         self.svd = None
         if svd_tranformation:
             self.svd = load_object(DecomposeData.model_path)
+
+        self.scaler = StandardScaler()
 
     def svd_transform(self, X):
         # length = len(X)
@@ -50,6 +51,9 @@ class HSCnnDataPreprocessor:
             flattened_tranformed_images = self.svd_transform(
                 flattened_tranformed_images
             )
+        flattened_tranformed_images = self.scaler.fit_transform(
+            flattened_tranformed_images
+        )
         if ids:
             return flattened_tranformed_images, labels, ids_list
         return flattened_tranformed_images, labels
@@ -64,6 +68,7 @@ class SkDataPreprocessor:
             self.svd = load_object(
                 DecomposeData.model_path.replace(".pkl", "_plain.pkl")
             )
+        self.scaler = StandardScaler()
 
     def svd_transform(self, X):
         # length = len(X)
@@ -94,6 +99,9 @@ class SkDataPreprocessor:
             flattened_tranformed_images = self.svd_transform(
                 flattened_tranformed_images
             )
+        flattened_tranformed_images = self.scaler.fit_transform(
+            flattened_tranformed_images
+        )
         if ids:
             return flattened_tranformed_images, labels, ids_list
         return flattened_tranformed_images, labels
