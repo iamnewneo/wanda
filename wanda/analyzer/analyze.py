@@ -102,7 +102,9 @@ def plot_snr_curves(df_hs, df_plain, snr):
     df_plain = df_plain[df_plain.snr == snr].reset_index(drop=True)
     for model in MODELS:
         temp_hs = df_hs[df_hs.model == model].reset_index(drop=True)
-        fpr, tpr, threshold = roc_curve(temp_hs["label"], temp_hs["pred_label"])
+        fpr, tpr, threshold = roc_curve(
+            switch_labels(temp_hs["label"]), temp_hs["pred_label"]
+        )
         plt.plot(fpr, tpr, label=f"{model}")
     plt.title(f"ROC Curve for SNR: {snr} With H-Score")
     plt.legend(loc="lower right")
@@ -116,7 +118,9 @@ def plot_snr_curves(df_hs, df_plain, snr):
 
     for model in MODELS:
         temp_plain = df_plain[df_plain.model == model].reset_index(drop=True)
-        fpr, tpr, threshold = roc_curve(temp_plain["label"], temp_plain["pred_label"])
+        fpr, tpr, threshold = roc_curve(
+            switch_labels(temp_plain["label"]), temp_plain["pred_label"]
+        )
         plt.plot(fpr, tpr, label=f"{model}")
     plt.title(f"ROC Curve for SNR: {snr} Without H-Score")
     plt.legend(loc="lower right")
