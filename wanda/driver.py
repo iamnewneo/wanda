@@ -34,7 +34,7 @@ def main():
     # train_h_score_cnn()
     # visualize_activation_maps()
 
-    # train_data_decomposer()
+    train_data_decomposer()
 
     train_dict_hs = {}
     test_dict_hs = {}
@@ -106,8 +106,8 @@ def main():
     test_loader = create_hs_data_loader(
         batch_size=config.TEST_BATCH_SIZE, train=False, shuffle=False, greyscale=True
     )
-    # hs_data_preprocessor = SkDataPreprocessor()
-    hs_data_preprocessor = SkDataPreprocessor(svd_tranformation=False)
+    hs_data_preprocessor = SkDataPreprocessor()
+    # hs_data_preprocessor = SkDataPreprocessor(svd_tranformation=False)
     transformed_X, labels, ids = hs_data_preprocessor.get_preprocess_data(
         data_loader=train_loader, ids=True
     )
