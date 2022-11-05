@@ -7,6 +7,7 @@ import torchvision.transforms as transforms
 
 MEAN = [0.2112, 0.3528, 0.7894]
 STD = [0.0742, 0.1805, 0.1066]
+MODELS = ["Isolation_Forest", "Deep_SVDD", "ECOD", "SVM"]
 
 
 def get_numpy(x):
@@ -20,15 +21,26 @@ def switch_labels(a):
     return np.where((a == 0) | (a == 1), a ^ 1, a)
 
 
-def get_auc_score(y_true, y_pred):
+def get_auc_score(y_true, y_pred, model_name):
     """
     Switch labels because higher decision functionm score means
     no anomaly and negative value means anomaly
     and our dataset has 1 as anomaly and 0 as non anomaly
     so we switch our labels before calculating auc to align them properly
+    - SKLearn API Requires Reversal, low score means anomaly
+    - PyOD API Doesn't require reversal since higher score in this API
+    means anomaly
     """
-    return roc_auc_score(switch_labels(y_true), y_pred)
+    model_name = "_".join(model_name.split(" "))
+    if model_name not in MODELS:
+        raise ValueError(f"{model_name} not in {MODELS}")
 
+    if model_name in ["Deep_SVDD", "ECOD"]:
+        return roc_auc_score(y_true, y_pred)
+    elif model_name in ["Isolation_Forest", "SVM"]:
+        return roc_auc_score(switch_labels(y_true), y_pred)
+    else:
+        raise ValueError(f"{model_name} not found for ROC Calculation")
 
 def save_object(obj, path):
     print(f"Saving: {obj.__class__.__name__} at: {path}")
