@@ -308,7 +308,7 @@ def optimize_hyperparameters_hscore_input(train_dict, test_dict):
     print(
         f"ECOD Best Params: {best_study_ecod.best_params}. Best Value: {-1*best_study_ecod.best_value}"
     )
-    n_trials = 5
+    n_trials = 20
     if config.ENV == "dev":
         n_trials = 1
     best_study_svdd = optimize_svdd(train_dict, test_dict, n_trials=n_trials)
@@ -358,7 +358,7 @@ def optimize_hyperparameters_plain_input(train_dict, test_dict):
     print(
         f"ECOD Best Params: {best_study_ecod.best_params}. Best Value: {-1*best_study_ecod.best_value}"
     )
-    n_trials = 5
+    n_trials = 20
     if config.ENV == "dev":
         n_trials = 1
     best_study_svdd = optimize_svdd(train_dict, test_dict, n_trials=n_trials)
