@@ -22,8 +22,8 @@ trial_model_dict = {
 
 def optimize_iso_forest_fn(trial, train_dict, test_dict):
     n_estimators = trial.suggest_int("n_estimators", 50, 500)
-    max_features = trial.suggest_uniform("max_features", 0.2, 0.95)
-    contamination = trial.suggest_uniform("contamination", 0.1, 0.5)
+    max_features = trial.suggest_float("max_features", 0.2, 0.95)
+    contamination = trial.suggest_float("contamination", 0.1, 0.5)
     iso_forest_clf = IsoForestModel(
         random_state=42,
         n_estimators=n_estimators,
@@ -42,8 +42,8 @@ def optimize_iso_forest_fn(trial, train_dict, test_dict):
 
 
 def optimize_svm_fn(trial, train_dict, test_dict):
-    nu = trial.suggest_uniform("nu", 0.05, 0.95)
-    power_t = trial.suggest_uniform("power_t", 0.1, 0.9)
+    nu = trial.suggest_float("nu", 0.05, 0.95)
+    power_t = trial.suggest_float("power_t", 0.1, 0.9)
     svm_clf = SVMModel(nu=nu, power_t=power_t)
     transformed_X_train = train_dict["transformed_X"]
     transformed_X_test = test_dict["transformed_X"]
@@ -56,7 +56,7 @@ def optimize_svm_fn(trial, train_dict, test_dict):
 
 
 def optimize_deep_svdd_fn(trial, train_dict, test_dict):
-    contamination = trial.suggest_uniform("contamination", 0.1, 0.45)
+    contamination = trial.suggest_float("contamination", 0.1, 0.45)
     svdd_clf = DeepSVDDModel(contamination=contamination)
     transformed_X_train = train_dict["transformed_X"]
     transformed_X_test = test_dict["transformed_X"]
@@ -69,7 +69,7 @@ def optimize_deep_svdd_fn(trial, train_dict, test_dict):
 
 
 def optimize_ecod_fn(trial, train_dict, test_dict):
-    contamination = trial.suggest_uniform("contamination", 0.1, 0.45)
+    contamination = trial.suggest_float("contamination", 0.1, 0.45)
     ecod_clf = ECODModel(contamination=contamination)
     transformed_X_train = train_dict["transformed_X"]
     transformed_X_test = test_dict["transformed_X"]

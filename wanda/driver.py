@@ -229,13 +229,13 @@ def evaluate_best_models_hscore_input(test_dict):
     labels = get_numpy(labels)
     ids = get_numpy(ids)
 
-    clf = load_object(SVMModel.model_path)
-    model_evaluator = Evaluator(model=clf)
-    model_evaluator.evaulate(transformed_X, labels, ids)
+    # clf = load_object(SVMModel.model_path)
+    # model_evaluator = Evaluator(model=clf)
+    # model_evaluator.evaulate(transformed_X, labels, ids)
 
-    clf = load_object(IsoForestModel.model_path)
-    model_evaluator = Evaluator(model=clf)
-    model_evaluator.evaulate(transformed_X, labels, ids)
+    # clf = load_object(IsoForestModel.model_path)
+    # model_evaluator = Evaluator(model=clf)
+    # model_evaluator.evaulate(transformed_X, labels, ids)
 
     clf = load_object(ECODModel.model_path)
     model_evaluator = Evaluator(model=clf)
@@ -256,13 +256,13 @@ def evaluate_best_models_plain(test_dict):
     labels = test_dict["labels"]
     ids = test_dict["ids"]
 
-    clf = load_object(SVMModel.model_path.replace(".pkl", "_plain.pkl"))
-    model_evaluator = Evaluator(model=clf)
-    model_evaluator.evaulate(transformed_X, labels, ids, save_postfix="plain")
+    # clf = load_object(SVMModel.model_path.replace(".pkl", "_plain.pkl"))
+    # model_evaluator = Evaluator(model=clf)
+    # model_evaluator.evaulate(transformed_X, labels, ids, save_postfix="plain")
 
-    clf = load_object(IsoForestModel.model_path.replace(".pkl", "_plain.pkl"))
-    model_evaluator = Evaluator(model=clf)
-    model_evaluator.evaulate(transformed_X, labels, ids, save_postfix="plain")
+    # clf = load_object(IsoForestModel.model_path.replace(".pkl", "_plain.pkl"))
+    # model_evaluator = Evaluator(model=clf)
+    # model_evaluator.evaulate(transformed_X, labels, ids, save_postfix="plain")
 
     clf = load_object(ECODModel.model_path.replace(".pkl", "_plain.pkl"))
     model_evaluator = Evaluator(model=clf)
@@ -288,20 +288,20 @@ def optimize_hyperparameters_hscore_input(train_dict, test_dict):
     print("Models Performance with H-Score Input")
     print("*" * 100)
 
-    best_study_iso = optimize_iso_forest(
-        train_dict, test_dict, n_trials=config.N_OPT_TRIALS
-    )
-    best_model = best_study_iso.__getattribute__("_best_model")
-    save_object(best_model, IsoForestModel.model_path)
-    print(
-        f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
-    )
-    best_study_svm = optimize_svm(train_dict, test_dict, n_trials=config.N_OPT_TRIALS)
-    best_model = best_study_svm.__getattribute__("_best_model")
-    save_object(best_model, SVMModel.model_path)
-    print(
-        f"SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
-    )
+    # best_study_iso = optimize_iso_forest(
+    #     train_dict, test_dict, n_trials=config.N_OPT_TRIALS
+    # )
+    # best_model = best_study_iso.__getattribute__("_best_model")
+    # save_object(best_model, IsoForestModel.model_path)
+    # print(
+    #     f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
+    # )
+    # best_study_svm = optimize_svm(train_dict, test_dict, n_trials=config.N_OPT_TRIALS)
+    # best_model = best_study_svm.__getattribute__("_best_model")
+    # save_object(best_model, SVMModel.model_path)
+    # print(
+    #     f"SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
+    # )
     best_study_ecod = optimize_ecod(train_dict, test_dict, n_trials=config.N_OPT_TRIALS)
     best_model = best_study_ecod.__getattribute__("_best_model")
     save_object(best_model, ECODModel.model_path)
@@ -320,13 +320,13 @@ def optimize_hyperparameters_hscore_input(train_dict, test_dict):
 
     print("*" * 100)
     print("*" * 100)
-    result_string = f"""Summary: Models Performance with H-Score Input
-    Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}
-    SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}
-    ECOD Best Params: {best_study_ecod.best_params}. Best Value: {-1*best_study_ecod.best_value}
-    Deep SVDD Best Params: {best_study_svdd.best_params}. Best Value: {-1*best_study_svdd.best_value}
-    """
-    print(result_string)
+    result_string = (
+        f"Summary: Models Performance without H-Score Input/Plain Input"
+        # f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
+        # f"SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
+        f"ECOD Best Params: {best_study_ecod.best_params}. Best Value: {-1*best_study_ecod.best_value}"
+        f"Deep SVDD Best Params: {best_study_svdd.best_params}. Best Value: {-1*best_study_svdd.best_value}"
+    )
     save_text_results(result_string, path=f"{config.BASE_PATH}/data/wih_HS_summary.txt")
     print("*" * 100)
     print("*" * 100)
@@ -336,22 +336,22 @@ def optimize_hyperparameters_plain_input(train_dict, test_dict):
     print("*" * 100)
     print("Models Performance without H-Score Input/Plain Input")
     print("*" * 100)
-    best_study_iso = optimize_iso_forest(
-        train_dict, test_dict, n_trials=config.N_OPT_TRIALS
-    )
-    best_model = best_study_iso.__getattribute__("_best_model")
-    save_object(
-        best_model, IsoForestModel.model_path.replace(".pkl", "_plain.pkl"),
-    )
-    print(
-        f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
-    )
-    best_study_svm = optimize_svm(train_dict, test_dict, n_trials=config.N_OPT_TRIALS)
-    best_model = best_study_svm.__getattribute__("_best_model")
-    save_object(best_model, SVMModel.model_path.replace(".pkl", "_plain.pkl"))
-    print(
-        f"SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
-    )
+    # best_study_iso = optimize_iso_forest(
+    #     train_dict, test_dict, n_trials=config.N_OPT_TRIALS
+    # )
+    # best_model = best_study_iso.__getattribute__("_best_model")
+    # save_object(
+    #     best_model, IsoForestModel.model_path.replace(".pkl", "_plain.pkl"),
+    # )
+    # print(
+    #     f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
+    # )
+    # best_study_svm = optimize_svm(train_dict, test_dict, n_trials=config.N_OPT_TRIALS)
+    # best_model = best_study_svm.__getattribute__("_best_model")
+    # save_object(best_model, SVMModel.model_path.replace(".pkl", "_plain.pkl"))
+    # print(
+    #     f"SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
+    # )
     best_study_ecod = optimize_ecod(train_dict, test_dict, n_trials=config.N_OPT_TRIALS)
     best_model = best_study_ecod.__getattribute__("_best_model")
     save_object(best_model, ECODModel.model_path.replace(".pkl", "_plain.pkl"))
@@ -369,12 +369,13 @@ def optimize_hyperparameters_plain_input(train_dict, test_dict):
     )
     print("*" * 100)
     print("*" * 100)
-    result_string = f"""Summary: Models Performance without H-Score Input/Plain Input
-    Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}
-    SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}
-    ECOD Best Params: {best_study_ecod.best_params}. Best Value: {-1*best_study_ecod.best_value}
-    Deep SVDD Best Params: {best_study_svdd.best_params}. Best Value: {-1*best_study_svdd.best_value}
-    """
+    result_string = (
+        f"Summary: Models Performance without H-Score Input/Plain Input"
+        # f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
+        # f"SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
+        f"ECOD Best Params: {best_study_ecod.best_params}. Best Value: {-1*best_study_ecod.best_value}"
+        f"Deep SVDD Best Params: {best_study_svdd.best_params}. Best Value: {-1*best_study_svdd.best_value}"
+    )
     print(result_string)
     save_text_results(
         result_string, path=f"{config.BASE_PATH}/data/without_HS_summary.txt"

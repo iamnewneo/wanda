@@ -75,7 +75,7 @@ class DeepSVDDModel(BaseEstimator, TransformerMixin):
             epochs = 1
         self.deep_svd_clf = DeepSVDD(
             use_ae=True,
-            hidden_neurons=[128, 64, 32],
+            hidden_neurons=[64, 32],
             contamination=self.contamination,
             epochs=epochs,
             batch_size=config.BATCH_SIZE,
