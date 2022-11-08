@@ -142,7 +142,9 @@ def plot_snr_curves(df_hs, df_plain, snr):
         temp_plain = df_plain[df_plain.model == model].reset_index(drop=True)
         fpr, tpr, threshold = None, None, None
         if model in ["SVDD", "ECOD"]:
-            fpr, tpr, threshold = roc_curve(temp_plain["label"], temp_plain["pred_label"])
+            fpr, tpr, threshold = roc_curve(
+                temp_plain["label"], temp_plain["pred_label"]
+            )
         elif model in ["ISOF", "SVM"]:
             fpr, tpr, threshold = roc_curve(
                 switch_labels(temp_plain["label"]), temp_plain["pred_label"]
