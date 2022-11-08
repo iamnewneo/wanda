@@ -268,7 +268,7 @@ def evaluate_best_models_plain(test_dict):
     # model_evaluator = Evaluator(model=clf)
     # model_evaluator.evaulate(transformed_X, labels, ids, save_postfix="plain")
 
-    clf = DeepSVDDModel(contamination=0.3973426328781215Deep)
+    clf = DeepSVDDModel(contamination=0.3973426328781215)
     clf.fit(transformed_X)
     model_evaluator = Evaluator(model=clf)
     model_evaluator.evaulate(transformed_X, labels, ids, save_postfix="plain")
