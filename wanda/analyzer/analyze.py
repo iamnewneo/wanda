@@ -88,6 +88,8 @@ def detail_analyze_model():
         df_plain.groupby(["model", "snr"]).apply(auc_group).reset_index(drop=False)
     ).rename(columns={0: "auc"})
 
+    plot_overall_auc_comparison(df_hs, df_plain)
+
     for snr in SNR:
         plot_snr_comparisons(df_hs_auc, df_plain_auc, snr)
         plot_snr_curves(df_hs, df_plain, snr)
@@ -159,4 +161,31 @@ def plot_snr_curves(df_hs, df_plain, snr):
     plt.xlabel("False Positive Rate")
     plt.tight_layout()
     plt.savefig(f"{BASE_PATH}/plots/ROC_curve_snr_{snr}_Without_Score.jpeg")
+    plt.close()
+
+
+def plot_overall_auc_comparison(df_hs, df_plain):
+    df_hs_auc_overall = (
+        df_hs.groupby(["model"])
+        .apply(auc_group)
+        .reset_index(drop=False)
+        .rename(columns={0: "With H-Score"})
+    )
+
+    df_plain_auc_overall = (
+        df_plain.groupby(["model"]).apply(auc_group).reset_index(drop=False)
+    ).rename(columns={0: "Without H-Score"})
+
+    df_both_auc_overall = df_hs_auc_overall.merge(
+        df_plain_auc_overall, how="left", on="model"
+    )
+
+    ax = df_both_auc_overall.plot(
+        x="model",
+        y=["With H-Score", "Without H-Score"],
+        kind="bar",
+        title=f"Overall AUC Comparison",
+    )
+    plt.tight_layout()
+    ax.figure.savefig(f"{BASE_PATH}/plots/overall_auc_comparison.jpeg")
     plt.close()
