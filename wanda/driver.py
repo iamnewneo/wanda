@@ -128,8 +128,8 @@ def main():
     test_dict_sk["labels"] = labels
     test_dict_sk["ids"] = ids
 
-    # optimize_hyperparameters_hscore_input(train_dict_hs, test_dict_hs)
-    # optimize_hyperparameters_plain_input(train_dict_sk, test_dict_sk)
+    optimize_hyperparameters_hscore_input(train_dict_hs, test_dict_hs)
+    optimize_hyperparameters_plain_input(train_dict_sk, test_dict_sk)
 
     evaluate_best_models_hscore_input(test_dict_hs)
     evaluate_best_models_plain(test_dict_sk)

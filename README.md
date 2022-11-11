@@ -10,6 +10,10 @@ This implementation uses pytorch library and pytorch lightning trainer
 Requirements
 Python3, Pytorch, Pytorch Lightning
 
+Installation Command
+`mamba install pytorch==1.12.1 torchvision==0.13.1 torchaudio==0.12.1 -c pytorch`
+`mamba install pyod optuna pytorch-lightning scikit-learn-intelex -c conda-forge`
+
 Setup
 To run this project install the requirements and make sure you have at least 14GB GPU:
 
