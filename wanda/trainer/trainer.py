@@ -17,8 +17,8 @@ def hs_model_trainer(train_dataloader, progress_bar_refresh_rate):
         gpus=gpus,
         max_epochs=config.MAX_EPOCHS,
         min_epochs=1,
-        # weights_summary=None,
-        # progress_bar_refresh_rate=progress_bar_refresh_rate,
+        weights_summary=None,
+        progress_bar_refresh_rate=progress_bar_refresh_rate,
         precision=precision,
     )
     trainer.fit(model, train_dataloader)
