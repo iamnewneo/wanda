@@ -1,4 +1,3 @@
-from umap import UMAP
 from sklearn.manifold import Isomap
 from sklearn.preprocessing import StandardScaler
 from sklearn.base import BaseEstimator, TransformerMixin
