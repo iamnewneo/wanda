@@ -187,6 +187,6 @@ def plot_overall_auc_comparison(df_hs, df_plain):
         title=f"Overall AUC Comparison",
     )
     plt.tight_layout()
-    ax.xlabel("Models")
+    ax.set_xlabel("Models")
     ax.figure.savefig(f"{BASE_PATH}/plots/overall_auc_comparison.jpeg")
     plt.close()
