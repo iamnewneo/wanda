@@ -21,6 +21,10 @@ class HSDataReader:
         self.processed_data_path = f"{DATA_DIR}/processed"
         self.headers = ["id", "path", "snr", "image_index", "next_image", "label"]
 
+    def get_empty_df(self):
+        df = pd.DataFrame(columns=self.headers)
+        return df
+
     def get_snr_path(self, snr):
         if snr == -10:
             return f"{self.sig_snr_neg_10}"
@@ -40,8 +44,10 @@ class HSDataReader:
         for folder in folders:
             temp_df = self.get_df_from_folder(folder, snr)
             df_list.append(temp_df)
-
-        df = pd.concat(df_list, ignore_index=True)
+        if df_list:
+            df = pd.concat(df_list, ignore_index=True)
+        else:
+            df = self.get_empty_df()
         return df
 
     def clean_df(self, df):
