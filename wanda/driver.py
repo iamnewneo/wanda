@@ -229,17 +229,17 @@ def evaluate_best_models_hscore_input(test_dict):
     labels = get_numpy(labels)
     ids = get_numpy(ids)
 
-    # clf = load_object(SVMModel.model_path)
-    # model_evaluator = Evaluator(model=clf)
-    # model_evaluator.evaulate(transformed_X, labels, ids)
+    clf = load_object(SVMModel.model_path)
+    model_evaluator = Evaluator(model=clf)
+    model_evaluator.evaulate(transformed_X, labels, ids)
 
-    # clf = load_object(IsoForestModel.model_path)
-    # model_evaluator = Evaluator(model=clf)
-    # model_evaluator.evaulate(transformed_X, labels, ids)
+    clf = load_object(IsoForestModel.model_path)
+    model_evaluator = Evaluator(model=clf)
+    model_evaluator.evaulate(transformed_X, labels, ids)
 
-    # clf = load_object(ECODModel.model_path)
-    # model_evaluator = Evaluator(model=clf)
-    # model_evaluator.evaulate(transformed_X, labels, ids)
+    clf = load_object(ECODModel.model_path)
+    model_evaluator = Evaluator(model=clf)
+    model_evaluator.evaulate(transformed_X, labels, ids)
 
     clf = DeepSVDDModel(contamination=0.3206670971813005)
     clf.fit(transformed_X)
@@ -256,17 +256,17 @@ def evaluate_best_models_plain(test_dict):
     labels = test_dict["labels"]
     ids = test_dict["ids"]
 
-    # clf = load_object(SVMModel.model_path.replace(".pkl", "_plain.pkl"))
-    # model_evaluator = Evaluator(model=clf)
-    # model_evaluator.evaulate(transformed_X, labels, ids, save_postfix="plain")
+    clf = load_object(SVMModel.model_path.replace(".pkl", "_plain.pkl"))
+    model_evaluator = Evaluator(model=clf)
+    model_evaluator.evaulate(transformed_X, labels, ids, save_postfix="plain")
 
-    # clf = load_object(IsoForestModel.model_path.replace(".pkl", "_plain.pkl"))
-    # model_evaluator = Evaluator(model=clf)
-    # model_evaluator.evaulate(transformed_X, labels, ids, save_postfix="plain")
+    clf = load_object(IsoForestModel.model_path.replace(".pkl", "_plain.pkl"))
+    model_evaluator = Evaluator(model=clf)
+    model_evaluator.evaulate(transformed_X, labels, ids, save_postfix="plain")
 
-    # clf = load_object(ECODModel.model_path.replace(".pkl", "_plain.pkl"))
-    # model_evaluator = Evaluator(model=clf)
-    # model_evaluator.evaulate(transformed_X, labels, ids, save_postfix="plain")
+    clf = load_object(ECODModel.model_path.replace(".pkl", "_plain.pkl"))
+    model_evaluator = Evaluator(model=clf)
+    model_evaluator.evaulate(transformed_X, labels, ids, save_postfix="plain")
 
     clf = DeepSVDDModel(contamination=0.3973426328781215)
     clf.fit(transformed_X)
