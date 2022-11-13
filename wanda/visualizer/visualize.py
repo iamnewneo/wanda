@@ -50,6 +50,7 @@ class Visualize:
                 plt.savefig(
                     f"{config.BASE_PATH}/plots/label_{label}_image_idx_{image_idx}_heatmap.png"
                 )
+        plt.close()
 
     def get_plotting_data(self, samples):
         with torch.no_grad():
