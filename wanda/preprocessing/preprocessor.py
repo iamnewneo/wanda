@@ -5,11 +5,11 @@ from wanda import config
 from sklearn.preprocessing import StandardScaler
 from wanda.model.cnn_hscore import WandaHSCNN
 from wanda.model.decompose import DecomposeData
-from wanda.utils.util import load_object
+from wanda.utils.util import load_object, save_object
 
 
 class HSCnnDataPreprocessor:
-    def __init__(self, svd_tranformation=True) -> None:
+    def __init__(self, svd_tranformation=True, save_scaler=False) -> None:
         self.cnn_hs = WandaHSCNN()
         self.cnn_hs.load_state_dict(
             torch.load(f"{config.BASE_PATH}/models/WandaHSCNN.pt")
@@ -22,6 +22,8 @@ class HSCnnDataPreprocessor:
             self.svd = load_object(DecomposeData.model_path)
 
         self.scaler = StandardScaler()
+        self.save_scaler = save_scaler
+        self.scaler_path = f"{config.BASE_PATH}/models/HS_Scaler.pkl"
 
     def svd_transform(self, X):
         # length = len(X)
@@ -54,6 +56,9 @@ class HSCnnDataPreprocessor:
         flattened_tranformed_images = self.scaler.fit_transform(
             flattened_tranformed_images
         )
+        if self.save_scaler:
+            save_object(self.scaler, self.scaler_path)
+
         if ids:
             return flattened_tranformed_images, labels, ids_list
         return flattened_tranformed_images, labels
