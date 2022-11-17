@@ -30,7 +30,7 @@ class DecomposeData(BaseEstimator, TransformerMixin):
 
     def transform(self, X):
         X_trans = self.scaler.transform(X)
-        return self.clf.transform(X)
+        return self.clf.transform(X_trans)
 
     def fit_transform(self, X, y=None):
         self.scaler.fit(X)
