@@ -12,6 +12,7 @@ def load_image(img_path):
     pytorch_tranforms = get_tranforms()
     X = Image.open(img_path).convert("RGB")
     X = pytorch_tranforms(X)
+    X = X.type(torch.float32) / 255
     return X
 
 
@@ -25,6 +26,7 @@ class Predictor:
     def load_hscore_model(self):
         cnn_hs = WandaHSCNN()
         cnn_hs.load_state_dict(torch.load(f"{config.BASE_PATH}/models/WandaHSCNN.pt"))
+        cnn_hs.eval()
         return cnn_hs
 
     def load_anomaly_model(self, model_name):
