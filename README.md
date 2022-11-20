@@ -31,7 +31,12 @@ WANDA has 8 main folders:
 5. preprocessing: This folder has code for preprocessing that is required to tranform the raw inputs to a form that is compatible with different models.
 6. trainer: This folder has a script called trainer.py that we use to train our H-Score model.
 7. utils: This folder has general util functions like resize, save and load models etc that we use in our project.
-8. visualizer: This folder has the code to visualize the activation maps of our trained H-Score model
+8. visualizer: This folder has the code to visualize the activation maps of our trained H-Score model.
+
+Outside of `wanda` fodler there are 3 more important folders:
+1. models: This folder has all the trained models. Here we save the models that we train, and read from here for inference later.
+2. plots: This folder has the plots that we plot to carry out our analysis of the models.
+3. data: This folder has the spectrogram data, csv of train and test along with the predictions that we do while testing our model.
 
 ## Setup [For Training Models from Scratch]
 To run this project install the requirements.
