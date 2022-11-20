@@ -1,4 +1,3 @@
-import pandas as pd
 from api import Predictor, load_image
 
 
@@ -8,6 +7,12 @@ predictor = Predictor()
 
 
 def is_anomaly(spectrogram):
+    """
+    Args:
+        spectrogram (Tensor): Single Tensor image of size (C, H, W).
+    Returns:
+        Bool: True if spectrogram has an anomaly False otherwise
+    """
     is_anomalous = predictor.is_anomaly(spectrogram)
     return is_anomalous
 
