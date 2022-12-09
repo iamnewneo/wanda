@@ -82,10 +82,10 @@ def optimize_ecod_fn(trial, train_dict, test_dict):
     return -1 * auc_score
 
 
-def optimize_iso_forest(train_dict, test_dict, n_trials):
+def optimize_iso_forest(train_dict, test_dict, n_trials, prednet=False):
     study = optuna.create_study(direction="minimize")
     study.optimize(
-        lambda trial: optimize_iso_forest_fn(trial, train_dict, test_dict),
+        lambda trial: optimize_iso_forest_fn(trial, train_dict, test_dict, prednet),
         n_trials=n_trials,
         n_jobs=config.N_JOBS,
     )
@@ -93,10 +93,10 @@ def optimize_iso_forest(train_dict, test_dict, n_trials):
     return study
 
 
-def optimize_svm(train_dict, test_dict, n_trials):
+def optimize_svm(train_dict, test_dict, n_trials, prednet=False):
     study = optuna.create_study(direction="minimize")
     study.optimize(
-        lambda trial: optimize_svm_fn(trial, train_dict, test_dict),
+        lambda trial: optimize_svm_fn(trial, train_dict, test_dict, prednet),
         n_trials=n_trials,
         n_jobs=config.N_JOBS,
     )
@@ -104,10 +104,10 @@ def optimize_svm(train_dict, test_dict, n_trials):
     return study
 
 
-def optimize_svdd(train_dict, test_dict, n_trials):
+def optimize_svdd(train_dict, test_dict, n_trials, prednet=False):
     study = optuna.create_study(direction="minimize")
     study.optimize(
-        lambda trial: optimize_deep_svdd_fn(trial, train_dict, test_dict),
+        lambda trial: optimize_deep_svdd_fn(trial, train_dict, test_dict, prednet),
         n_trials=n_trials,
         n_jobs=4,
     )
