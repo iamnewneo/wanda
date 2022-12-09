@@ -20,7 +20,7 @@ trial_model_dict = {
 }
 
 
-def optimize_iso_forest_fn(trial, train_dict, test_dict):
+def optimize_iso_forest_fn(trial, train_dict, test_dict, prednet=False):
     n_estimators = trial.suggest_int("n_estimators", 50, 500)
     max_features = trial.suggest_float("max_features", 0.2, 0.95)
     contamination = trial.suggest_float("contamination", 0.1, 0.5)
@@ -30,6 +30,7 @@ def optimize_iso_forest_fn(trial, train_dict, test_dict):
         max_features=max_features,
         contamination=contamination,
         n_jobs=config.N_JOBS,
+        prednet=prednet,
     )
     transformed_X_train = train_dict["transformed_X"]
     transformed_X_test = test_dict["transformed_X"]
@@ -41,10 +42,10 @@ def optimize_iso_forest_fn(trial, train_dict, test_dict):
     return -1 * auc_score
 
 
-def optimize_svm_fn(trial, train_dict, test_dict):
+def optimize_svm_fn(trial, train_dict, test_dict, prednet=False):
     nu = trial.suggest_float("nu", 0.05, 0.95)
     power_t = trial.suggest_float("power_t", 0.1, 0.9)
-    svm_clf = SVMModel(nu=nu, power_t=power_t)
+    svm_clf = SVMModel(nu=nu, power_t=power_t, prednet=prednet)
     transformed_X_train = train_dict["transformed_X"]
     transformed_X_test = test_dict["transformed_X"]
     labels_test = test_dict["labels"]
@@ -55,9 +56,9 @@ def optimize_svm_fn(trial, train_dict, test_dict):
     return -1 * auc_score
 
 
-def optimize_deep_svdd_fn(trial, train_dict, test_dict):
+def optimize_deep_svdd_fn(trial, train_dict, test_dict, prednet=False):
     contamination = trial.suggest_float("contamination", 0.1, 0.45)
-    svdd_clf = DeepSVDDModel(contamination=contamination)
+    svdd_clf = DeepSVDDModel(contamination=contamination, prednet=prednet)
     transformed_X_train = train_dict["transformed_X"]
     transformed_X_test = test_dict["transformed_X"]
     labels_test = test_dict["labels"]

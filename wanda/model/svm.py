@@ -10,12 +10,14 @@ from wanda import config
 class SVMModel(BaseEstimator, TransformerMixin):
     model_path = f"{config.BASE_PATH}/models/WandaSVM.pkl"
 
-    def __init__(self, nu, power_t) -> None:
+    def __init__(self, nu, power_t, prednet=False) -> None:
         self.nu = nu
         self.power_t = power_t
         self.model_name = "SVM"
         self.svm_clf = None
         self.model_path = self.model_path
+        if prednet:
+            self.model_path = self.model_path.replace(".pkl", "_prednet.pkl")
 
     def fit(self, preprocessed_data, y=None):
         if torch.is_tensor(preprocessed_data):

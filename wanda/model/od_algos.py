@@ -61,11 +61,13 @@ class ECODModel(BaseEstimator, TransformerMixin):
 class DeepSVDDModel(BaseEstimator, TransformerMixin):
     model_path = f"{config.BASE_PATH}/models/DeepSVDD.pkl"
 
-    def __init__(self, contamination) -> None:
+    def __init__(self, contamination, prednet=False) -> None:
         self.model_name = "Deep SVDD"
         self.deep_svd_clf = None
         self.model_path = self.model_path
         self.contamination = contamination
+        if prednet:
+            self.model_path = self.model_path.replace(".pkl", "_prednet.pkl")
 
     def fit(self, preprocessed_data, y=None):
         if torch.is_tensor(preprocessed_data):

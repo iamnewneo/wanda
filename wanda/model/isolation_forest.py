@@ -11,7 +11,13 @@ class IsoForestModel(BaseEstimator, TransformerMixin):
     model_path = f"{config.BASE_PATH}/models/IsoForest.pkl"
 
     def __init__(
-        self, random_state, n_estimators, max_features, contamination, n_jobs
+        self,
+        random_state,
+        n_estimators,
+        max_features,
+        contamination,
+        n_jobs,
+        prednet=False,
     ) -> None:
         self.random_state = random_state
         self.n_estimators = n_estimators
@@ -21,6 +27,8 @@ class IsoForestModel(BaseEstimator, TransformerMixin):
         self.model_name = "Isolation Forest"
         self.iso_forest_clf = None
         self.model_path = self.model_path
+        if prednet:
+            self.model_path = self.model_path.replace(".pkl", "_prednet.pkl")
 
     def fit(self, preprocessed_data, y=None):
         if torch.is_tensor(preprocessed_data):

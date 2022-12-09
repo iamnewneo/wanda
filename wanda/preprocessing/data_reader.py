@@ -1,6 +1,7 @@
 import glob
 import pandas as pd
 from wanda import config
+from sklearn.model_selection import train_test_split
 
 DATA_DIR = f"{config.BASE_PATH}/data"
 TRAIN_DIR = f"{DATA_DIR}/Training_Data_Set_Without_Interference"
@@ -113,6 +114,61 @@ class HSDataReader:
 
     def process_dataset(self):
         self.get_train_df()
+
+
+class PrednetDataReader:
+    def __init__(self, train=True) -> None:
+        _data_dir = f"{DATA_DIR}/PredNet_Spectrogram_Data_Set"
+        self.train = train
+        self.sig_snr_neg_10 = f"{_data_dir}/Error_-10db.csv"
+        self.sig_snr_0 = f"{_data_dir}/Error_0db.csv"
+        self.sig_snr_10 = f"{_data_dir}/Error_10db.csv"
+        self.sig_snr_20 = f"{_data_dir}/Error_20db.csv"
+        self.processed_data_path = f"{DATA_DIR}/processed"
+
+        self.sig_snr_neg_10_labels = f"{_data_dir}/GT_-10db.csv"
+        self.sig_snr_0_labels = f"{_data_dir}/GT_0db.csv"
+        self.sig_snr_10_labels = f"{_data_dir}/GT_10db.csv"
+        self.sig_snr_20_labels = f"{_data_dir}/GT_20db.csv"
+
+    def preprocess_data(self):
+        df_snr_neg_10 = pd.read_csv(self.sig_snr_neg_10, header=None)
+        df_snr_0 = pd.read_csv(self.sig_snr_0, header=None)
+        df_snr_10 = pd.read_csv(self.sig_snr_10, header=None)
+        df_snr_20 = pd.read_csv(self.sig_snr_20, header=None)
+
+        df_snr_neg_10_labels = pd.read_csv(self.sig_snr_neg_10_labels, names=["label"])
+        df_snr_0_labels = pd.read_csv(self.sig_snr_0_labels, names=["label"])
+        df_snr_10_labels = pd.read_csv(self.sig_snr_10_labels, names=["label"])
+        df_snr_20_labels = pd.read_csv(self.sig_snr_20_labels, names=["label"])
+
+        df_snr_neg_10["label"] = df_snr_neg_10_labels["label"]
+        df_snr_0["label"] = df_snr_0_labels["label"]
+        df_snr_10["label"] = df_snr_10_labels["label"]
+        df_snr_20["label"] = df_snr_20_labels["label"]
+
+        df_final = pd.concat(
+            [df_snr_neg_10, df_snr_0, df_snr_10, df_snr_20], ignore_index=True
+        ).reset_index(drop=True)
+
+        y = df_final["label"]
+        X = df_final.drop(["label"], axis=1).reset_index(drop=True)
+
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, stratify=y, test_size=0.25, random_state=42
+        )
+
+        df_train = X_train
+        df_train["label"] = y_train
+        df_test = X_test
+        df_test["label"] = y_test
+
+        temp = df_train[df_train.label == 1].reset_index(drop=True)
+        df_train = df_train[df_train.label == 0].reset_index(drop=True)
+        df_test = pd.concat([df_test, temp], ignore_index=True).reset_index(drop=True)
+
+        df_train.to_csv(f"{self.processed_data_path}/prednet_train.csv", index=False)
+        df_test.to_csv(f"{self.processed_data_path}/prednet_test.csv", index=False)
 
 
 if __name__ == "__main__":
