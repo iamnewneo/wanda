@@ -151,6 +151,8 @@ class PrednetDataReader:
             [df_snr_neg_10, df_snr_0, df_snr_10, df_snr_20], ignore_index=True
         ).reset_index(drop=True)
 
+        df_final["id"] = df_final.index.values
+
         y = df_final["label"]
         X = df_final.drop(["label"], axis=1).reset_index(drop=True)
 
