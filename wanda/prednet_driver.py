@@ -58,7 +58,7 @@ def train_prednet():
         train_dict, test_dict, n_trials=config.N_OPT_TRIALS, prednet=True
     )
     best_model = best_study_iso.__getattribute__("_best_model")
-    save_object(best_model, IsoForestModel.model_path)
+    save_object(best_model, IsoForestModel.model_path.replace(".pkl", "_prednet.pkl"))
     print(
         f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
     )
@@ -66,7 +66,7 @@ def train_prednet():
         train_dict, test_dict, n_trials=config.N_OPT_TRIALS, prednet=True
     )
     best_model = best_study_svm.__getattribute__("_best_model")
-    save_object(best_model, SVMModel.model_path)
+    save_object(best_model, SVMModel.model_path.replace(".pkl", "_prednet.pkl"))
     print(
         f"SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
     )
@@ -85,10 +85,10 @@ def train_prednet():
     print("*" * 100)
     print("*" * 100)
     result_string = (
-        f"Summary: Prednet Models Performance"
-        f"Isolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
-        f"SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
-        f"Deep SVDD Best Params: {best_study_svdd.best_params}. Best Value: {-1*best_study_svdd.best_value}"
+        f"Summary: Prednet Models Performance "
+        f"\nIsolation Forest Best Params: {best_study_iso.best_params}. Best Value: {-1*best_study_iso.best_value}"
+        f"\nSVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
+        f"\nDeep SVDD Best Params: {best_study_svdd.best_params}. Best Value: {-1*best_study_svdd.best_value}"
     )
     save_text_results(
         result_string, path=f"{config.BASE_PATH}/data/prednet_summary.txt"
@@ -108,18 +108,18 @@ def evaluate_best_models_prednet(test_dict):
     labels = test_dict["labels"]
     ids = test_dict["ids"]
 
-    clf = load_object(SVMModel.model_path)
+    clf = load_object(SVMModel.model_path.replace(".pkl", "_prednet.pkl"))
     model_evaluator = Evaluator(model=clf)
-    model_evaluator.evaulate(transformed_X, labels, ids)
+    model_evaluator.evaulate(transformed_X, labels, ids, save_postfix="prednet")
 
-    clf = load_object(IsoForestModel.model_path)
+    clf = load_object(IsoForestModel.model_path.replace(".pkl", "_prednet.pkl"))
     model_evaluator = Evaluator(model=clf)
-    model_evaluator.evaulate(transformed_X, labels, ids)
+    model_evaluator.evaulate(transformed_X, labels, ids, save_postfix="prednet")
 
-    clf = DeepSVDDModel(contamination=0.3206670971813005)
+    clf = DeepSVDDModel(contamination=0.23604052406454484)
     clf.fit(transformed_X)
     model_evaluator = Evaluator(model=clf)
-    model_evaluator.evaulate(transformed_X, labels, ids)
+    model_evaluator.evaulate(transformed_X, labels, ids, save_postfix="prednet")
 
 
 if __name__ == "__main__":
