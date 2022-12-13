@@ -21,7 +21,6 @@ DATA_DIR = f"{config.BASE_PATH}/data"
 
 def main():
     train_prednet()
-    evaluate_best_models_prednet()
 
 
 def train_prednet():
@@ -91,9 +90,13 @@ def train_prednet():
         f"SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
         f"Deep SVDD Best Params: {best_study_svdd.best_params}. Best Value: {-1*best_study_svdd.best_value}"
     )
-    save_text_results(result_string, path=f"{config.BASE_PATH}/data/prednet_summary.txt")
+    save_text_results(
+        result_string, path=f"{config.BASE_PATH}/data/prednet_summary.txt"
+    )
     print("*" * 100)
     print("*" * 100)
+
+    evaluate_best_models_prednet(test_dict)
 
 
 def evaluate_best_models_prednet(test_dict):
