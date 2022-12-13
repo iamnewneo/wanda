@@ -14,6 +14,7 @@ from wanda.trainer.optimizer import (
     optimize_svdd,
 )
 from wanda.utils.util import load_object, save_object
+from sklearn.preprocessing import StandardScaler
 
 DATA_DIR = f"{config.BASE_PATH}/data"
 
@@ -40,6 +41,11 @@ def train_prednet():
 
     y_test = df_test["label"].to_numpy()
     X_test = df_test.drop(["label", "id"], axis=1).reset_index(drop=True).to_numpy()
+
+
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_test = scaler.transform(X_test)
 
     train_dict["transformed_X"] = X_train
     train_dict["labels"] = y_train
