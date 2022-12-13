@@ -13,7 +13,7 @@ from wanda.trainer.optimizer import (
     optimize_svm,
     optimize_svdd,
 )
-from wanda.utils.util import load_object, save_object
+from wanda.utils.util import load_object, save_object, save_text_results
 from sklearn.preprocessing import StandardScaler
 
 DATA_DIR = f"{config.BASE_PATH}/data"
@@ -22,6 +22,7 @@ DATA_DIR = f"{config.BASE_PATH}/data"
 def main():
     train_prednet()
     evaluate_best_models_prednet()
+
 
 def train_prednet():
     df_train = pd.read_csv(f"{DATA_DIR}/processed/prednet_train.csv")
@@ -41,7 +42,6 @@ def train_prednet():
 
     y_test = df_test["label"].to_numpy()
     X_test = df_test.drop(["label", "id"], axis=1).reset_index(drop=True).to_numpy()
-
 
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
@@ -78,7 +78,7 @@ def train_prednet():
         train_dict, test_dict, n_trials=n_trials, prednet=True
     )
     best_model = best_study_svdd.__getattribute__("_best_model")
-    save_object(best_model, DeepSVDDModel.model_path)
+    # save_object(best_model, DeepSVDDModel.model_path)
     print(
         f"Deep SVDD Best Params: {best_study_svdd.best_params}. Best Value: {-1*best_study_svdd.best_value}"
     )
@@ -91,6 +91,7 @@ def train_prednet():
         f"SVM Best Params: {best_study_svm.best_params}. Best Value: {-1*best_study_svm.best_value}"
         f"Deep SVDD Best Params: {best_study_svdd.best_params}. Best Value: {-1*best_study_svdd.best_value}"
     )
+    save_text_results(result_string, path=f"{config.BASE_PATH}/data/prednet_summary.txt")
     print("*" * 100)
     print("*" * 100)
 
