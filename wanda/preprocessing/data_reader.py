@@ -147,6 +147,11 @@ class PrednetDataReader:
         df_snr_10["label"] = df_snr_10_labels["label"]
         df_snr_20["label"] = df_snr_20_labels["label"]
 
+        df_snr_neg_10["snr"] = -10
+        df_snr_0["snr"] = 0
+        df_snr_10["snr"] = 10
+        df_snr_20["snr"] = 20
+
         df_final = pd.concat(
             [df_snr_neg_10, df_snr_0, df_snr_10, df_snr_20], ignore_index=True
         ).reset_index(drop=True)

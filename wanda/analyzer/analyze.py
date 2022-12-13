@@ -22,7 +22,6 @@ def auc_group(df):
     models_in_df = df["model"].unique()
     if len(models_in_df) == 1:
         model_name = models_in_df[0]
-        
         model_name = MODEL_NAME_MAP[model_name]
         y_hat = df.label
         y = df.pred_label
@@ -91,23 +90,58 @@ def detail_analyze_model():
         df_plain.groupby(["model", "snr"]).apply(auc_group).reset_index(drop=False)
     ).rename(columns={0: "auc"})
 
-    plot_overall_auc_comparison(df_hs, df_plain)
-    plot_overall_roc_curve(df_hs, df_plain)
+    df_prednet_test = pd.read_csv(f"{BASE_PATH}/data/processed/prednet_test.csv")
+
+    df_prednet_test = df_prednet_test[["id", "snr", "label"]]
+    # df_prednet_test["id"] = df_prednet_test["id"].astype(str)
+
+    df_svm = pd.read_csv(f"{root_path}/SVM_prednet_preds.csv")
+    df_svm = df_svm.merge(df_prednet_test, how="left", on="id")
+    df_svm["model"] = "SVM"
+
+    df_isof = pd.read_csv(f"{root_path}/Isolation_Forest_prednet_preds.csv")
+    df_isof = df_isof.merge(df_prednet_test, how="left", on="id")
+    df_isof["model"] = "ISOF"
+
+    df_svdd = pd.read_csv(f"{root_path}/Deep_SVDD_prednet_preds.csv")
+    df_svdd = df_svdd.merge(df_prednet_test, how="left", on="id")
+    df_svdd["model"] = "SVDD"
+
+    df_prednet = pd.concat([df_svm, df_isof, df_svdd], ignore_index=True).reset_index(
+        drop=True
+    )
+    df_prednet["snr"] = df_prednet["snr"].astype(int)
+    df_prednet = df_prednet[df_prednet.model.isin(MODELS)].reset_index(drop=True)
+
+    df_prednet["snr"] = df_prednet["snr"].astype(int)
+    df_prednet["label"] = df_prednet["label"].astype(int)
+    df_prednet["pred_label"] = df_prednet["pred_label"].astype(float)
+
+    df_prednet_auc = (
+        df_prednet.groupby(["model", "snr"]).apply(auc_group).reset_index(drop=False)
+    ).rename(columns={0: "auc"})
+
+    plot_overall_auc_comparison(df_hs, df_plain, df_prednet=df_prednet)
+    plot_overall_roc_curve(df_hs, df_plain, df_prednet=df_prednet)
 
     for snr in SNR:
-        plot_snr_comparisons(df_hs_auc, df_plain_auc, snr)
-        plot_snr_curves(df_hs, df_plain, snr)
+        plot_snr_comparisons(df_hs_auc, df_plain_auc, snr, df_prednet=df_prednet_auc)
+        plot_snr_curves(df_hs, df_plain, snr, df_prednet=df_prednet)
 
 
-def plot_snr_comparisons(df_hs, df_plain, snr):
+def plot_snr_comparisons(df_hs, df_plain, snr, df_prednet=None):
     df_hs = df_hs[df_hs.snr == snr].reset_index(drop=True)
     df_plain = df_plain[df_plain.snr == snr].reset_index(drop=True)
+    if df_prednet is not None:
+        df_prednet = df_prednet[df_prednet.snr == snr].reset_index(drop=True)
     labels = list(df_hs["model"].unique())
 
     df_plot = pd.DataFrame()
     df_plot["Algorithm"] = df_hs["model"]
     df_plot["H_Score"] = df_hs["auc"]
     df_plot["Without_H_Score"] = df_plain["auc"]
+    if df_prednet is not None:
+        df_plot["Prednet"] = df_prednet["auc"]
 
     ax = df_plot.plot(
         x="Algorithm",
@@ -122,9 +156,11 @@ def plot_snr_comparisons(df_hs, df_plain, snr):
     plt.close()
 
 
-def plot_snr_curves(df_hs, df_plain, snr):
+def plot_snr_curves(df_hs, df_plain, snr, df_prednet=None):
     df_hs = df_hs[df_hs.snr == snr].reset_index(drop=True)
     df_plain = df_plain[df_plain.snr == snr].reset_index(drop=True)
+    if df_prednet is not None:
+        df_prednet = df_prednet[df_prednet.snr == snr].reset_index(drop=True)
     for model in MODELS:
         temp_hs = df_hs[df_hs.model == model].reset_index(drop=True)
         fpr, tpr, threshold = None, None, None
@@ -169,8 +205,32 @@ def plot_snr_curves(df_hs, df_plain, snr):
     plt.savefig(f"{BASE_PATH}/plots/ROC_curve_snr_{snr}_Without_Score.jpeg")
     plt.close()
 
+    if df_prednet is not None:
+        for model in MODELS:
+            temp_plain = df_prednet[df_prednet.model == model].reset_index(drop=True)
+            fpr, tpr, threshold = None, None, None
+            if model in ["SVDD", "ECOD"]:
+                fpr, tpr, threshold = roc_curve(
+                    temp_plain["label"], temp_plain["pred_label"]
+                )
+            elif model in ["ISOF", "SVM"]:
+                fpr, tpr, threshold = roc_curve(
+                    switch_labels(temp_plain["label"]), temp_plain["pred_label"]
+                )
+            plt.plot(fpr, tpr, label=f"{model}")
+        plt.title(f"ROC Curve for SIR: {snr} Prednet")
+        plt.legend(loc="lower right")
+        # plt.plot([0, 1], [0, 1],'r--')
+        plt.xlim([0, 1])
+        plt.ylim([0, 1])
+        plt.ylabel("True Positive Rate")
+        plt.xlabel("False Positive Rate")
+        plt.tight_layout()
+        plt.savefig(f"{BASE_PATH}/plots/ROC_curve_snr_{snr}_Prednet.jpeg")
+        plt.close()
 
-def plot_overall_auc_comparison(df_hs, df_plain):
+
+def plot_overall_auc_comparison(df_hs, df_plain, df_prednet=None):
     df_hs_auc_overall = (
         df_hs.groupby(["model"])
         .apply(auc_group)
@@ -186,9 +246,20 @@ def plot_overall_auc_comparison(df_hs, df_plain):
         df_plain_auc_overall, how="left", on="model"
     )
 
+    if df_prednet is not None:
+        df_prednet_auc_overall = (
+            df_prednet.groupby(["model"]).apply(auc_group).reset_index(drop=False)
+        ).rename(columns={0: "Prednet"})
+        df_both_auc_overall = df_both_auc_overall.merge(
+            df_prednet_auc_overall, how="left", on="model"
+        )
+
+    y = ["With H-Score", "Without H-Score"]
+    if df_prednet is not None:
+        y = ["With H-Score", "Without H-Score", "Prednet"]
     ax = df_both_auc_overall.plot(
         x="model",
-        y=["With H-Score", "Without H-Score"],
+        y=y,
         kind="bar",
         title=f"Overall AUC Comparison",
         # xlabel="AUC",
@@ -200,7 +271,7 @@ def plot_overall_auc_comparison(df_hs, df_plain):
     plt.close()
 
 
-def plot_overall_roc_curve(df_hs, df_plain):
+def plot_overall_roc_curve(df_hs, df_plain, df_prednet=None):
     for model in MODELS:
         temp_hs = df_hs[df_hs.model == model].reset_index(drop=True)
         fpr, tpr, threshold = None, None, None
@@ -244,3 +315,27 @@ def plot_overall_roc_curve(df_hs, df_plain):
     plt.tight_layout()
     plt.savefig(f"{BASE_PATH}/plots/Overall_ROC_curve_Without_Score.jpeg")
     plt.close()
+
+    if df_prednet is not None:
+        for model in MODELS:
+            temp_plain = df_prednet[df_prednet.model == model].reset_index(drop=True)
+            fpr, tpr, threshold = None, None, None
+            if model in ["SVDD", "ECOD"]:
+                fpr, tpr, threshold = roc_curve(
+                    temp_plain["label"], temp_plain["pred_label"]
+                )
+            elif model in ["ISOF", "SVM"]:
+                fpr, tpr, threshold = roc_curve(
+                    switch_labels(temp_plain["label"]), temp_plain["pred_label"]
+                )
+            plt.plot(fpr, tpr, label=f"{model}")
+        plt.title(f"Overall ROC Curve for Prednet")
+        plt.legend(loc="lower right")
+        # plt.plot([0, 1], [0, 1],'r--')
+        plt.xlim([0, 1])
+        plt.ylim([0, 1])
+        plt.ylabel("True Positive Rate")
+        plt.xlabel("False Positive Rate")
+        plt.tight_layout()
+        plt.savefig(f"{BASE_PATH}/plots/Overall_ROC_curve_Prednet.jpeg")
+        plt.close()
